@@ -177,7 +177,6 @@ describe('tcp', function() {
                 });
                 nc.on('close', function() {
 
-                    nc.end();
                     done();
                 });
             });
