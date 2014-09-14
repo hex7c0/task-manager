@@ -6,7 +6,7 @@
 
 Task-manager for cluster or single application.
 Use `nc` for [Unix domain socket](http://en.wikipedia.org/wiki/Unix_domain_socket).
-Use `telnet` or `TCP` software for port.
+Use `telnet` or `TCP` software for `TCP port`.
 
 
 ## Installation
@@ -68,7 +68,7 @@ quit
 
 #### listen
 
- - `listen`- **Number | String** Number for `TCP` port, String for `sock` *(default "required")*
+ - `listen`- **Number | String** Number for `TCP port`, String (path) for `sock` *(default "required")*
 
 #### [options]
 
