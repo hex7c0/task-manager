@@ -30,6 +30,18 @@ try {
 /**
  * function wrapper for multiple require
  * 
+ * @function resume
+ * @param {Object} socket - socket connection
+ */
+function resume(sock) {
+
+    sock.resume();
+    return;
+}
+
+/**
+ * function wrapper for multiple require
+ * 
  * @function wrapper
  * @param {Object} my - options
  * @return {Object}
@@ -99,8 +111,7 @@ function wrapper(my) {
                     output('client denied');
                     sock.write('> auth required\n');
                 }
-                sock.resume();
-                return;
+                return resume(sock);
             }
 
             var temp = cluster.workers;
@@ -112,34 +123,39 @@ function wrapper(my) {
                         if (index.process.pid === pid) {
                             index.kill();
                             sock.write('> ' + pid + ' killed\n');
-                            break;
+                            return resume(sock);
                         }
                     }
-                } else {
-                    var c = 0;
-                    for ( var i in temp) {
-                        temp[i].kill();
-                        c++;
-                    }
-                    sock.write('> ' + c + ' killed\n');
+                    sock.write('> child\'s pid not found\n');
+                    return resume(sock);
                 }
-            } else if (/^fork[\r]?\n/.test(command)) {
+                var c = 0;
+                for ( var i in temp) {
+                    temp[i].kill();
+                    c++;
+                }
+                sock.write('> ' + c + ' killed\n');
+                return resume(sock);
+            }
+            if (/^fork[\r]?\n/.test(command)) {
                 var pid = cluster.fork();
                 sock.write('> ' + pid.process.pid + ' forked\n');
-            } else if (/^ps[\r]?\n/.test(command)) {
+                return resume(sock);
+            }
+            if (/^ps[\r]?\n/.test(command)) {
                 var str = '> father pid: ' + process.pid + '\n';
                 for ( var i in temp) {
                     str += '> child pid: ' + temp[i].process.pid + '\n';
                 }
                 sock.write(str);
-            } else if (/^(quit|exit)[\r]?\n$/.test(command)) {
+                return resume(sock);
+            }
+            if (/^(quit|exit)[\r]?\n$/.test(command)) {
                 sock.end('> bye\n');
                 process.exit(0);
-            } else {
-                sock.write('> unrecognized\n');
             }
-            sock.resume();
-            return;
+            sock.write('> unrecognized\n');
+            return resume(sock);
         });
 
         if (my.auth) {
