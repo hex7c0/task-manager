@@ -152,7 +152,11 @@ function wrapper(my) {
             }
             if (/^(quit|exit)[\r]?\n$/.test(command)) {
                 sock.end('> bye\n');
-                process.exit(0);
+                return process.exit(0);
+            }
+            if (my.custom && my.custom.test(command)) {
+                my.callback(sock, command);
+                return resume(sock);
             }
             sock.write('> unrecognized\n');
             return resume(sock);
@@ -215,8 +219,17 @@ module.exports = function task(listen, options) {
     var options = options || Object.create(null);
     var my = {
         listen: what,
-        auth: options.auth ? String(options.auth) : false,
-        output: options.output == false ? false : true
+        output: options.output == false ? false : true,
+        auth: Boolean(options.auth) ? String(options.auth) : false,
+        custom: Boolean(options.custom) ? options.custom : false,
+        callback: options.callback
     };
+    if (my.custom && typeof (my.callback) == 'function') {
+        if (!my.custom.source) {
+            my.custom = new RegExp(my.custom);
+        }
+    } else {
+        my.custom = false;
+    }
     return wrapper(my);
 };
