@@ -16,14 +16,13 @@
 try {
     var task = require('../index.min.js'); // use require('task-manager')
     var assert = require('assert');
-    var fs = require('fs');
     var net = require('net');
 } catch (MODULE_NOT_FOUND) {
     console.error(MODULE_NOT_FOUND);
     process.exit(1);
 }
 // load
-var p = '2000';
+var p = 20001;
 
 /*
  * test module

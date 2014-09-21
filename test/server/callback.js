@@ -1,6 +1,6 @@
 "use strict";
 /**
- * @file tcp server
+ * @file callback server
  * @module task-manager
  * @package task-manager
  * @subpackage examples
@@ -22,7 +22,7 @@ try {
     process.exit(1);
 }
 // load
-var p = 20001;
+var p = 20000;
 
 /*
  * use
@@ -39,7 +39,13 @@ if (cluster.isMaster) {
 
     task(p, {
         output: false,
-        auth: 'ciao'
+        auth: 'ciao',
+        custom: /^parrot/,
+        callback: function(sock, command) {
+
+            sock.write(command);
+            return;
+        }
     });
 }
 
@@ -50,6 +56,6 @@ if (cluster.isWorker) {
             'Content-Type': 'text/plain'
         });
         res.end('Hello World\n');
-    }).listen(3002, '127.0.0.1');
-    // console.log('Server running at http://127.0.0.1:6001/');
+    }).listen(3000, '127.0.0.1');
+    // console.log('Server running at http://127.0.0.1:6000/');
 }

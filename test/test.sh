@@ -3,8 +3,9 @@
 cd test/
 
 # run server in background
+node server/callback.js &
 node server/socket.js &
 node server/tcp.js &
 
 # killer
-mocha --bail --check-leaks *.js
+mocha -b --check-leaks *.js
