@@ -74,6 +74,8 @@ quit
 
  - `auth` - **String** Accept commands only if `auth` is the same *(default "disabled")*
  - `output`- **Boolean** Flag for print info to console *(default "enabled")*
+ - `custom`- **String | RegExp** Custom validation for client command (after built-in command) *(default "disabled")*
+ - `callback`- **Function** Execute this function, if `custom` command is accepted (socket and command as arguments) *(default "disabled")*
 
 ## Examples
 
