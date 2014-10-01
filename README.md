@@ -64,6 +64,11 @@ process quit (equal to `exit`)
 quit
 ```
 
+close TCP/socket listener
+```bash
+close
+```
+
 ### task(listen,[options])
 
 #### listen
@@ -73,7 +78,7 @@ quit
 #### [options]
 
  - `auth` - **String** Accept commands only if `auth` is the same *(default "disabled")*
- - `output`- **Boolean** Flag for print info to console *(default "enabled")*
+ - `output`- **Boolean** Flag for print info to console *(default "disabled")*
  - `custom`- **String | RegExp** Custom validation for client command (after built-in command) *(default "disabled")*
  - `callback`- **Function** Execute this function, if `custom` command is accepted (socket and command as arguments) *(default "disabled")*
 
