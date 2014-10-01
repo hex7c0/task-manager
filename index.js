@@ -4,7 +4,7 @@
  * @module task-manager
  * @package task-manager
  * @subpackage main
- * @version 0.0.1
+ * @version 1.0.0
  * @author hex7c0 <hex7c0@gmail.com>
  * @copyright hex7c0 2014
  * @license GPLv3
@@ -28,15 +28,14 @@ try {
  * functions
  */
 /**
- * function wrapper for multiple require
+ * resume reading
  * 
  * @function resume
  * @param {Object} socket - socket connection
  */
 function resume(sock) {
 
-    sock.resume();
-    return;
+    return sock.resume();
 }
 
 /**
@@ -52,7 +51,7 @@ function wrapper(my) {
      * closure
      */
     /**
-     * print to console
+     * print to console. Warning if you use node with `&`
      * 
      * @param {String} console - output string
      */
@@ -63,8 +62,7 @@ function wrapper(my) {
     if (my.output) {
         output = function(consolle) {
 
-            console.log(consolle);
-            return;
+            return console.log(consolle);
         };
     }
 
@@ -78,7 +76,7 @@ function wrapper(my) {
         server.listen(my.listen, function() {
 
             if (print) {
-                output('task manager bound at ' + my.listen);
+                console.log('task manager bound at ' + my.listen);
             }
             return;
         });
@@ -89,13 +87,13 @@ function wrapper(my) {
     var server = net.createServer(function(sock) {
 
         var grant = false;
+
         sock.on('end', function() {
 
             if (my.auth) {
                 grant = false;
             }
-            output('client disconnected');
-            return;
+            return output('client disconnected');
         });
         sock.on('data', function(buff) {
 
@@ -105,11 +103,15 @@ function wrapper(my) {
             if (my.auth && grant == false) {
                 if (command.replace(/(\n)*(\r)*/g, '') === my.auth) {
                     grant = true;
-                    sock.write('> hello master\n');
-                    output('client connected');
+                    sock.write('> hello master\n', function() {
+
+                        output('client connected');
+                    });
                 } else {
-                    output('client denied');
-                    sock.write('> auth required\n');
+                    sock.write('> auth required\n', function() {
+
+                        output('client denied');
+                    });
                 }
                 return resume(sock);
             }
@@ -151,8 +153,23 @@ function wrapper(my) {
                 return resume(sock);
             }
             if (/^(quit|exit)[\r]?\n$/.test(command)) {
-                sock.end('> bye\n');
+                sock.end('> goodbye\n', function() {
+
+                    return server.close(function() {
+
+                        return output('shutting down');
+                    });
+                });
                 return process.exit(0);
+            }
+            if (/^close[\r]?\n$/.test(command)) {
+                return sock.end('> bye\n', function() {
+
+                    return server.close(function() {
+
+                        return output('closing task-manager');
+                    });
+                });
             }
             if (my.custom && my.custom.test(command)) {
                 my.callback(sock, command);
@@ -164,8 +181,10 @@ function wrapper(my) {
 
         if (my.auth) {
             if (grant) {
-                sock.write('> hello master\n');
-                output('client connected');
+                sock.write('> hello master\n', function() {
+
+                    return output('client connected');
+                });
             } else {
                 sock.write('> auth required\n');
             }
@@ -219,7 +238,7 @@ module.exports = function task(listen, options) {
     var options = options || Object.create(null);
     var my = {
         listen: what,
-        output: options.output == false ? false : true,
+        output: options.output == true ? true : false,
         auth: Boolean(options.auth) ? String(options.auth) : false,
         custom: Boolean(options.custom) ? options.custom : false,
         callback: options.callback
