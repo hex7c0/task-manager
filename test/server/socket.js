@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * @file socket server
  * @module task-manager

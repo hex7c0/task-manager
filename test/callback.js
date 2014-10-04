@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * @file callback test
  * @module task-manager
