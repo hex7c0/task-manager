@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * @file task-manager main
  * @module task-manager
