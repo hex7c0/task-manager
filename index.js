@@ -18,7 +18,6 @@ try {
     var cluster = require('cluster');
     var unlink = require('fs').unlink;
     var net = require('net');
-    var resolve = require('path').resolve;
 } catch (MODULE_NOT_FOUND) {
     console.error(MODULE_NOT_FOUND);
     process.exit(1);
@@ -233,7 +232,7 @@ module.exports = function task(listen, options) {
     if (!listen) {
         throw new TypeError('listen required');
     }
-    var what = Number(listen) || resolve(String(listen));
+    var what = Number(listen) || String(listen);
 
     var options = options || Object.create(null);
     var my = {
