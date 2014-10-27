@@ -99,7 +99,7 @@ function wrapper(my) {
             sock.pause();
             var command = String(buff);
 
-            if (my.auth && grant == false) {
+            if (my.auth && grant === false) {
                 if (command.replace(/(\n)*(\r)*/g, '') === my.auth) {
                     grant = true;
                     sock.write('> hello master\n', function() {
@@ -115,9 +115,10 @@ function wrapper(my) {
                 return resume(sock);
             }
 
+            var pid;
             var temp = cluster.workers;
             if (/^(kill|swap)/.test(command)) {
-                var pid = command.match(/[0-9]+\n/);
+                pid = command.match(/[0-9]+\n/);
                 if (pid && (pid = Number(pid[0]))) {
                     for ( var i in temp) {
                         var index = temp[i];
@@ -131,22 +132,22 @@ function wrapper(my) {
                     return resume(sock);
                 }
                 var c = 0;
-                for ( var i in temp) {
-                    temp[i].kill();
+                for ( var ii in temp) {
+                    temp[ii].kill();
                     c++;
                 }
                 sock.write('> ' + c + ' killed\n');
                 return resume(sock);
             }
             if (/^fork[\r]?\n/.test(command)) {
-                var pid = cluster.fork();
+                pid = cluster.fork();
                 sock.write('> ' + pid.process.pid + ' forked\n');
                 return resume(sock);
             }
             if (/^ps[\r]?\n/.test(command)) {
                 var str = '> father pid: ' + process.pid + '\n';
-                for ( var i in temp) {
-                    str += '> child pid: ' + temp[i].process.pid + '\n';
+                for ( var iii in temp) {
+                    str += '> child pid: ' + temp[iii].process.pid + '\n';
                 }
                 sock.write(str);
                 return resume(sock);
@@ -224,25 +225,25 @@ function wrapper(my) {
  * @exports task
  * @function task
  * @param {Number|String} listen - listen type
- * @param {Object} [options] - various options. Check README.md
+ * @param {Object} [opt] - various options. Check README.md
  * @return {Object}
  */
-module.exports = function task(listen, options) {
+function task(listen, opt) {
 
     if (!listen) {
         throw new TypeError('listen required');
     }
     var what = Number(listen) || String(listen);
 
-    var options = options || Object.create(null);
+    var options = opt || Object.create(null);
     var my = {
         listen: what,
-        output: options.output == true ? true : false,
+        output: options.output === true ? true : false,
         auth: Boolean(options.auth) ? String(options.auth) : false,
         custom: Boolean(options.custom) ? options.custom : false,
         callback: options.callback
     };
-    if (my.custom && typeof (my.callback) == 'function') {
+    if (my.custom && typeof (my.callback) === 'function') {
         if (!my.custom.source) {
             my.custom = new RegExp(my.custom);
         }
@@ -250,4 +251,5 @@ module.exports = function task(listen, options) {
         my.custom = false;
     }
     return wrapper(my);
-};
+}
+module.exports = task;
