@@ -1,5 +1,5 @@
 {
-  "version": "1.0.2",
+  "version": "1.0.3",
   "name": "task-manager",
   "description": "task-manager for cluster or single application",
   "keywords": [
@@ -26,9 +26,10 @@
   "dependencies": {
   },
   "devDependencies": {
-    "mocha": "~1.21",
+    "mocha": "~2.0",
     "grunt-contrib-clean": "~0.6",
     "grunt-contrib-uglify": "~0.6",
+    "grunt-contrib-jshint": "~0.10",
     "grunt-endline": "~0.2"
   },
   "engines": {
