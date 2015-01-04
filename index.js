@@ -194,6 +194,10 @@ function wrapper(my) {
           });
         });
       }
+      if (my.custom && my.custom.test(command)) {
+        my.callback(sock, command);
+        return resume(sock);
+      }
       if (/^help[\r]?\n$/.test(command)) {
         index = '  kill|swap [pid]\n';
         index += '  disconnect pid\n';
@@ -204,8 +208,12 @@ function wrapper(my) {
         sock.write(index);
         return resume(sock);
       }
-      if (my.custom && my.custom.test(command)) {
-        my.callback(sock, command);
+      if (/^nyan[\r]?\n$/.test(command)) {
+        index = '-_-_-_-_-_-_-_,------,      o      \n';
+        index += '_-_-_-_-_-_-_-|   /\\_/\\            \n';
+        index += '-_-_-_-_-_-_-~|__( ^ .^)  +     +  \n';
+        index += '_-_-_-_-_-_-_-""  ""               \n';
+        sock.write(index);
         return resume(sock);
       }
       sock.write('> unrecognized, try "help"\n');
