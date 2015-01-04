@@ -1,3 +1,10 @@
+v1.1.0 / 2014-01-04
+==================
+
+  * Add "disconnect" (commands)
+  * Add "help" (commands)
+  * Add "json" (options)
+
 v1.0.3 / 2014-10-27
 ==================
 
