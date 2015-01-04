@@ -168,11 +168,11 @@ function wrapper(my) {
         return resume(sock);
       }
       if (/^ps[\r]?\n/.test(command)) {
-        var str = '> father pid: ' + process.pid + '\n';
+        index = '> father pid: ' + process.pid + '\n';
         for (i in temp) {
-          str += '> child pid: ' + temp[i].process.pid + '\n';
+          index += '> child pid: ' + temp[i].process.pid + '\n';
         }
-        sock.write(str);
+        sock.write(index);
         return resume(sock);
       }
       if (/^(quit|exit)[\r]?\n$/.test(command)) {
@@ -195,12 +195,13 @@ function wrapper(my) {
         });
       }
       if (/^help[\r]?\n$/.test(command)) {
-        sock.write('  kill|swap [pid]\n');
-        sock.write('  disconnect pid\n');
-        sock.write('  fork\n');
-        sock.write('  ps\n');
-        sock.write('  quit|exit\n');
-        sock.write('  close\n');
+        index = '  kill|swap [pid]\n';
+        index += '  disconnect pid\n';
+        index += '  fork\n';
+        index += '  ps\n';
+        index += '  quit|exit\n';
+        index += '  close\n';
+        sock.write(index);
         return resume(sock);
       }
       if (my.custom && my.custom.test(command)) {
