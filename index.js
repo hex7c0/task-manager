@@ -169,7 +169,10 @@ function wrapper(my) {
               }, 5000);
               index.on('disconnect', function() { // YOLO
 
-                return clearTimeout(timeout);
+                if (index.process.killed === true) {
+                  clearTimeout(timeout);
+                }
+                return;
               });
               if (my.json === false) {
                 sock.write('> ' + pid + ' disconnect\n');
