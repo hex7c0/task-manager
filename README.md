@@ -4,9 +4,11 @@
 [![Build Status](https://travis-ci.org/hex7c0/task-manager.svg)](https://travis-ci.org/hex7c0/task-manager)
 [![Dependency Status](https://david-dm.org/hex7c0/task-manager/status.svg)](https://david-dm.org/hex7c0/task-manager)
 
-Task-manager for cluster or single application.
-Use `nc` for [Unix domain socket](http://en.wikipedia.org/wiki/Unix_domain_socket).
-Use `telnet` or `TCP` software for `TCP port`.
+Task-manager for cluster or single application
+
+Use `nc` for [Unix domain socket](http://en.wikipedia.org/wiki/Unix_domain_socket)
+
+Use `telnet` or `TCP` software for `TCP port`
 
 
 ## Installation
