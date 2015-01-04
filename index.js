@@ -115,13 +115,12 @@ function wrapper(my) {
         return resume(sock);
       }
 
-      var index;
-      var pid;
+      var i, index, pid;
       var temp = cluster.workers;
       if (/^(kill|swap)/.test(command)) {
         pid = command.match(/[0-9]+\n/);
         if (pid && (pid = Number(pid[0]))) {
-          for ( var i in temp) {
+          for (i in temp) {
             index = temp[i];
             if (index.process.pid === pid) {
               index.kill();
@@ -133,8 +132,8 @@ function wrapper(my) {
           return resume(sock);
         }
         var c = 0;
-        for ( var ii in temp) {
-          temp[ii].kill();
+        for (i in temp) {
+          temp[i].kill();
           c++;
         }
         sock.write('> ' + c + ' killed\n');
@@ -143,8 +142,8 @@ function wrapper(my) {
       if (/^disconnect/.test(command)) {
         pid = command.match(/[0-9]+\n/);
         if (pid && (pid = Number(pid[0]))) {
-          for ( var j in temp) {
-            index = temp[j];
+          for (i in temp) {
+            index = temp[i];
             if (index.process.pid === pid) {
               index.disconnect();
               var timeout = setTimeout(function() { // zombie killer
@@ -170,8 +169,8 @@ function wrapper(my) {
       }
       if (/^ps[\r]?\n/.test(command)) {
         var str = '> father pid: ' + process.pid + '\n';
-        for ( var iii in temp) {
-          str += '> child pid: ' + temp[iii].process.pid + '\n';
+        for (i in temp) {
+          str += '> child pid: ' + temp[i].process.pid + '\n';
         }
         sock.write(str);
         return resume(sock);
