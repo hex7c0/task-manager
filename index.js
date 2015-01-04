@@ -195,11 +195,20 @@ function wrapper(my) {
           });
         });
       }
+      if (/^help[\r]?\n$/.test(command)) {
+        sock.write('  kill|swap [pid]\n');
+        sock.write('  disconnect pid\n');
+        sock.write('  fork\n');
+        sock.write('  ps\n');
+        sock.write('  quit|exit\n');
+        sock.write('  close\n');
+        return resume(sock);
+      }
       if (my.custom && my.custom.test(command)) {
         my.callback(sock, command);
         return resume(sock);
       }
-      sock.write('> unrecognized\n');
+      sock.write('> unrecognized, try "help"\n');
       return resume(sock);
     });
 
