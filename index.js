@@ -124,19 +124,36 @@ function wrapper(my) {
             index = temp[i];
             if (index.process.pid === pid) {
               index.kill();
-              sock.write('> ' + pid + ' killed\n');
+              if (my.json === false) {
+                sock.write('> ' + pid + ' killed\n');
+              } else {
+                sock.write(JSON.stringify({
+                  kill: pid
+                }));
+              }
               return resume(sock);
             }
           }
-          sock.write('> child\'s pid not found\n');
+          if (my.json === false) {
+            sock.write('> child\'s pid not found\n');
+          } else {
+            sock.write(JSON.stringify({
+              error: 'pid not found'
+            }));
+          }
           return resume(sock);
         }
-        var c = 0;
+        var c = Object.keys(temp).length;
         for (i in temp) {
           temp[i].kill();
-          c++;
         }
-        sock.write('> ' + c + ' killed\n');
+        if (my.json === false) {
+          sock.write('> ' + c + ' killed\n');
+        } else {
+          sock.write(JSON.stringify({
+            kills: c
+          }));
+        }
         return resume(sock);
       }
       if (/^disconnect/.test(command)) {
@@ -154,23 +171,53 @@ function wrapper(my) {
 
                 return clearTimeout(timeout);
               });
-              sock.write('> ' + pid + ' disconnect\n');
+              if (my.json === false) {
+                sock.write('> ' + pid + ' disconnect\n');
+              } else {
+                sock.write(JSON.stringify({
+                  disconnect: pid
+                }));
+              }
               return resume(sock);
             }
           }
         }
-        sock.write('> child\'s pid not found\n');
+        if (my.json === false) {
+          sock.write('> child\'s pid not found\n');
+        } else {
+          sock.write(JSON.stringify({
+            error: 'pid not found'
+          }));
+        }
         return resume(sock);
       }
       if (/^fork[\r]?\n/.test(command)) {
         pid = cluster.fork();
-        sock.write('> ' + pid.process.pid + ' forked\n');
+        if (my.json === false) {
+          index = '> ' + pid.process.pid + ' forked\n';
+        } else {
+          index = JSON.strigify({
+            fork: pid.process.pid
+          });
+        }
+        sock.write(index);
         return resume(sock);
       }
       if (/^ps[\r]?\n/.test(command)) {
-        index = '> father pid: ' + process.pid + '\n';
-        for (i in temp) {
-          index += '> child pid: ' + temp[i].process.pid + '\n';
+        if (my.json === false) {
+          index = '> father pid: ' + process.pid + '\n';
+          for (i in temp) {
+            index += '> child pid: ' + temp[i].process.pid + '\n';
+          }
+        } else {
+          index = {
+            father: process.pid,
+            child: []
+          };
+          for (i in temp) {
+            index.child.push(temp[i].process.pid);
+          }
+          index = JSON.stringify(index);
         }
         sock.write(index);
         return resume(sock);
@@ -282,7 +329,8 @@ function task(listen, opt) {
     output: options.output === true ? true : false,
     auth: Boolean(options.auth) ? String(options.auth) : false,
     custom: Boolean(options.custom) ? options.custom : false,
-    callback: options.callback
+    callback: options.callback,
+    json: Boolean(options.json)
   };
   if (my.custom && typeof (my.callback) === 'function') {
     if (!my.custom.source) {
