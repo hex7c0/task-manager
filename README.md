@@ -39,17 +39,27 @@ $ nc -U s.sock
 
 ### commands
 
-kill all children (equal to `swap`)
+show all commands
+```bash
+help
+```
+
+[kill](http://nodejs.org/api/cluster.html#cluster_worker_kill_signal_sigterm) all children (equal to `swap`)
 ```bash
 kill
 ```
 
-kill selected child, with his pid (equal to `swap`)
+[kill](http://nodejs.org/api/cluster.html#cluster_worker_kill_signal_sigterm) selected child, with his pid (equal to `swap`)
 ```bash
 kill 8564
 ```
 
-fork a new child
+[disconnect](http://nodejs.org/api/cluster.html#cluster_worker_disconnect) selected child, with his pid
+```bash
+kill 8564
+```
+
+[fork](http://nodejs.org/api/cluster.html#cluster_cluster_fork_env) a new child
 ```bash
 fork
 ```
