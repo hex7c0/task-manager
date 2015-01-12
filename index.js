@@ -148,14 +148,16 @@ function wrapper(my) {
           sock.write('> hello master\n', function() {
 
             output('client connected');
+            return resume(sock);
           });
         } else {
           sock.write('> auth required\n', function() {
 
             output('client denied');
+            return resume(sock);
           });
         }
-        return resume(sock);
+        return;
       }
 
       for ( var m in mod) {
@@ -191,19 +193,25 @@ function wrapper(my) {
         index += '  ps\n';
         index += '  exit\n';
         index += '  close\n';
-        sock.write(index);
-        return resume(sock);
+        return sock.write(index, function() {
+
+          return resume(sock);
+        });
       } else if (/^nyan[\r]?\n$/.test(command)) {
         index = '-_-_-_-_-_-_-_,------,      o      \n';
         index += '_-_-_-_-_-_-_-|   /\\_/\\            \n';
         index += '-_-_-_-_-_-_-~|__( ^ .^)  +     +  \n';
         index += '_-_-_-_-_-_-_-""  ""               \n';
-        sock.write(index);
-        return resume(sock);
+        return sock.write(index, function() {
+
+          return resume(sock);
+        });
       }
 
-      sock.write('> unrecognized, try "help"\n');
-      return resume(sock);
+      return sock.write('> unrecognized, try "help"\n', function() {
+
+        return resume(sock);
+      });
     });
   });
 
