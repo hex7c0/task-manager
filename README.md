@@ -74,7 +74,7 @@ get father [memory](http://nodejs.org/api/process.html#process_process_memoryusa
 memory
 ```
 
-show all pids
+show all [pids](http://nodejs.org/api/process.html#process_process_pid)
 ```bash
 ps
 ```
@@ -112,8 +112,8 @@ close
 
 #### [options]
 
- - `auth` - **String** Accept commands only if `auth` is the same *(default "disabled")*
- - `output`- **Boolean** Flag for print info to console *(default "disabled")*
+ - `auth` - **String** Accept commands only if `auth` is correct *(default "disabled")*
+ - `output`- **Boolean** Flag for print info to console (main process) *(default "disabled")*
  - `custom`- **String | RegExp** Custom validation for client command (after built-in command) *(default "disabled")*
  - `callback`- **Function** Execute this function, if `custom` command is accepted (socket and command as arguments) *(default "disabled")*
  - `json`- **Boolean** Flag for print info in JSON *(default "disabled")*
