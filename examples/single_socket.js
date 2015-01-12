@@ -14,7 +14,7 @@
  */
 // import
 try {
-    var task = require('../index.min.js'); // use require('task-manager')
+    var task = require('..'); // use require('task-manager')
     var http = require('http');
 } catch (MODULE_NOT_FOUND) {
     console.error(MODULE_NOT_FOUND);
