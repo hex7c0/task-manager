@@ -53,7 +53,7 @@ describe('callback', function() {
       });
     });
 
-    it('quit', function(done) {
+    it('exit', function(done) {
 
       var nc = net.connect(p, function() {
 
@@ -64,7 +64,7 @@ describe('callback', function() {
           if (/^> auth required/.test(inp)) {
             nc.write('ciao');
           } else if (/^> hello master/.test(inp)) {
-            nc.write('quit\n');
+            nc.write('exit\n');
           }
         });
         nc.on('close', function() {

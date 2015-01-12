@@ -141,7 +141,7 @@ describe('socket', function() {
       });
     });
 
-    it('swap', function(done) {
+    it('kill', function(done) {
 
       var nc = net.connect(p, function() {
 
@@ -152,7 +152,7 @@ describe('socket', function() {
           if (/^> auth required/.test(inp)) {
             nc.write('ciao');
           } else if (/^> hello master/.test(inp)) {
-            nc.write('swap\n');
+            nc.write('kill\n');
           } else if (/^> 2 killed\n/.test(inp)) {
             nc.end();
             done();
@@ -161,7 +161,7 @@ describe('socket', function() {
       });
     });
 
-    it('quit', function(done) {
+    it('exit', function(done) {
 
       var nc = net.connect(p, function() {
 
@@ -172,7 +172,7 @@ describe('socket', function() {
           if (/^> auth required/.test(inp)) {
             nc.write('ciao');
           } else if (/^> hello master/.test(inp)) {
-            nc.write('quit\n');
+            nc.write('exit\n');
           }
         });
         nc.on('close', function() {
