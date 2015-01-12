@@ -14,7 +14,6 @@
  */
 // import
 try {
-  var task = require('..'); // use require('task-manager')
   var assert = require('assert');
   var net = require('net');
 } catch (MODULE_NOT_FOUND) {

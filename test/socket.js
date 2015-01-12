@@ -14,7 +14,6 @@
  */
 // import
 try {
-  var task = require('..'); // use require('task-manager')
   var assert = require('assert');
   var fs = require('fs');
   var net = require('net');

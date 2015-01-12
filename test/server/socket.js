@@ -31,13 +31,6 @@ if (cluster.isMaster) {
   // 2 children
   cluster.fork();
   cluster.fork();
-  cluster.on('exit', function(worker, code, signal) {
-
-    if (worker.suicide == true) {
-      cluster.fork();
-    }
-    return;
-  });
 
   task(p, {
     output: false,
