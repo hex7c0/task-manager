@@ -22,13 +22,12 @@
     "url": "https://github.com/hex7c0/task-manager/issues",
     "email": "hex7c0@gmail.com"
   },
-  "main": "index.min.js",
+  "main": "index.js",
   "dependencies": {
   },
   "devDependencies": {
     "mocha": "~2.1",
     "grunt-contrib-clean": "~0.6",
-    "grunt-contrib-uglify": "~0.7",
     "grunt-contrib-jshint": "~0.10",
     "grunt-endline": "~0.2"
   },
