@@ -30,8 +30,6 @@ inside nodejs project
 var task = require('task-manager');
 
 task('s.sock');
-
-// make other
 ```
 
 open client for send commands
@@ -46,19 +44,14 @@ show all commands
 help
 ```
 
-[kill](http://nodejs.org/api/cluster.html#cluster_worker_kill_signal_sigterm) all children (equal to `swap`)
+[disconnect](http://nodejs.org/api/cluster.html#cluster_worker_disconnect) all children
 ```bash
-kill
-```
-
-[kill](http://nodejs.org/api/cluster.html#cluster_worker_kill_signal_sigterm) selected child, with his pid (equal to `swap`)
-```bash
-kill 8564
+disconnect
 ```
 
 [disconnect](http://nodejs.org/api/cluster.html#cluster_worker_disconnect) selected child, with his pid
 ```bash
-kill 8564
+disconnect 8564
 ```
 
 [fork](http://nodejs.org/api/cluster.html#cluster_cluster_fork_env) a new child
@@ -66,14 +59,44 @@ kill 8564
 fork
 ```
 
+[kill](http://nodejs.org/api/cluster.html#cluster_worker_kill_signal_sigterm) all children
+```bash
+kill
+```
+
+[kill](http://nodejs.org/api/cluster.html#cluster_worker_kill_signal_sigterm) selected child, with his pid
+```bash
+kill 8564
+```
+
+get father [memory](http://nodejs.org/api/process.html#process_process_memoryusage)
+```bash
+memory
+```
+
 show all pids
 ```bash
 ps
 ```
 
-process quit (equal to `exit`)
+get father [title](http://nodejs.org/api/process.html#process_process_title)
 ```bash
-quit
+title
+```
+
+set father [title](http://nodejs.org/api/process.html#process_process_title)
+```bash
+title Ciao
+```
+
+get father [uptime](http://nodejs.org/api/process.html#process_process_uptime)
+```bash
+uptime
+```
+
+process [exit](http://nodejs.org/api/process.html#process_process_exit_code)
+```bash
+exit
 ```
 
 close TCP/socket listener
