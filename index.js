@@ -187,9 +187,10 @@ function wrapper(my) {
           });
         });
       } else if (/^help[\r]?\n$/.test(command)) {
-        index = '  kill [pid]\n';
-        index += '  disconnect [pid]\n';
+        index = '  disconnect [pid]\n';
         index += '  fork\n';
+        index += '  kill [pid]\n';
+        index += '  memory\n';
         index += '  ps\n';
         index += '  exit\n';
         index += '  close\n';
