@@ -139,26 +139,6 @@ describe('tcp', function() {
       });
     });
 
-    it('kill', function(done) {
-
-      var nc = net.connect(p, function() {
-
-        nc.setNoDelay(true);
-        nc.on('data', function(buff) {
-
-          var inp = String(buff);
-          if (/^> auth required/.test(inp)) {
-            nc.write('ciao');
-          } else if (/^> hello master/.test(inp)) {
-            nc.write('kill\n');
-          } else if (/^> 2 killed\n/.test(inp)) {
-            nc.end();
-            done();
-          }
-        });
-      });
-    });
-
     it('exit', function(done) {
 
       var nc = net.connect(p, function() {
