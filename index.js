@@ -103,7 +103,7 @@ function wrapper(my) {
   /**
    * modules
    */
-  var path = __dirname + '/lib/';
+  var path = __dirname + '/min/lib/';
   var mod = Object.create(null);
   fs.readdirSync(path).forEach(function(module) {
 
