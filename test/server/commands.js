@@ -22,7 +22,7 @@ try {
   process.exit(1);
 }
 // load
-var p = 20000;
+var p = 20001;
 
 /*
  * use
@@ -43,11 +43,21 @@ if (cluster.isMaster) {
 }
 
 if (cluster.isWorker) {
+  process.on('disconnect', function() {
+
+    return process.exit();
+  });
+
   http.createServer(function(req, res) {
 
     res.writeHead(200, {
       'Content-Type': 'text/plain'
     });
     res.end('Hello World\n');
-  }).listen(3002, '127.0.0.1');
+  }).listen(3001, '127.0.0.1');
 }
+
+setTimeout(function() { // autokiller
+
+  return process.exit(1);
+}, p);

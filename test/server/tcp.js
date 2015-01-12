@@ -22,7 +22,7 @@ try {
   process.exit(1);
 }
 // load
-var p = 20001;
+var p = 20003;
 
 /*
  * use
@@ -45,5 +45,10 @@ if (cluster.isWorker) {
       'Content-Type': 'text/plain'
     });
     res.end('Hello World\n');
-  }).listen(3002, '127.0.0.1');
+  }).listen(3003, '127.0.0.1');
 }
+
+setTimeout(function() { // autokiller
+
+  return process.exit(1);
+}, p);

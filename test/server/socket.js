@@ -45,5 +45,10 @@ if (cluster.isWorker) {
       'Content-Type': 'text/plain'
     });
     res.end('Hello World\n');
-  }).listen(3001, '127.0.0.1');
+  }).listen(3002, '127.0.0.1');
 }
+
+setTimeout(function() { // autokiller
+
+  return process.exit(1);
+}, 20002);

@@ -31,10 +31,6 @@ if (cluster.isMaster) {
   // 2 children
   cluster.fork();
   cluster.fork();
-  cluster.on('exit', function(worker, code, signal) {
-
-    return;
-  });
 
   task(p, {
     output: false,
@@ -57,3 +53,8 @@ if (cluster.isWorker) {
     res.end('Hello World\n');
   }).listen(3000, '127.0.0.1');
 }
+
+setTimeout(function() { // autokiller
+
+  return process.exit(1);
+}, p);
