@@ -1,3 +1,11 @@
+v1.2.0 / 2014-01-12
+==================
+
+  * Split in Modules
+  * Add "memory" (commands)
+  * Add "title" (commands)
+  * Add "uptime" (commands)
+
 v1.1.0 / 2014-01-04
 ==================
 
