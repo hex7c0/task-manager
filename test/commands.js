@@ -54,6 +54,123 @@ describe('commands', function() {
     });
   });
 
+  describe('father', function() {
+
+    it('memory', function(done) {
+
+      var nc = net.connect(p, function() {
+
+        nc.setNoDelay(true);
+        nc.on('data', function(buff) {
+
+          var inp = String(buff);
+          if (/^> hello master/.test(inp)) {
+            nc.write('memory\n');
+          } else {
+            assert.equal(typeof JSON.parse(inp), 'object');
+            nc.end();
+            done();
+          }
+        });
+      });
+    });
+    it('uptime', function(done) {
+
+      var nc = net.connect(p, function() {
+
+        nc.setNoDelay(true);
+        nc.on('data', function(buff) {
+
+          var inp = String(buff);
+          if (/^> hello master/.test(inp)) {
+            nc.write('uptime\n');
+          } else {
+            var j = JSON.parse(inp);
+            assert.equal(typeof j.uptime, 'number');
+            nc.end();
+            done();
+          }
+        });
+      });
+    });
+    it('get name', function(done) {
+
+      var nc = net.connect(p, function() {
+
+        nc.setNoDelay(true);
+        nc.on('data', function(buff) {
+
+          var inp = String(buff);
+          if (/^> hello master/.test(inp)) {
+            nc.write('title\n');
+          } else {
+            var j = JSON.parse(inp);
+            assert.equal(j.name, 'node');
+            nc.end();
+            done();
+          }
+        });
+      });
+    });
+    it('set name', function(done) {
+
+      var nc = net.connect(p, function() {
+
+        nc.setNoDelay(true);
+        nc.on('data', function(buff) {
+
+          var inp = String(buff);
+          if (/^> hello master/.test(inp)) {
+            nc.write('title Ciao\n');
+          } else {
+            var j = JSON.parse(inp);
+            assert.equal(j.name, 'Ciao');
+            nc.end();
+            done();
+          }
+        });
+      });
+    });
+    it('get name again', function(done) {
+
+      var nc = net.connect(p, function() {
+
+        nc.setNoDelay(true);
+        nc.on('data', function(buff) {
+
+          var inp = String(buff);
+          if (/^> hello master/.test(inp)) {
+            nc.write('title\n');
+          } else {
+            var j = JSON.parse(inp);
+            assert.equal(j.name, 'Ciao');
+            nc.end();
+            done();
+          }
+        });
+      });
+    });
+    it('set right name', function(done) {
+
+      var nc = net.connect(p, function() {
+
+        nc.setNoDelay(true);
+        nc.on('data', function(buff) {
+
+          var inp = String(buff);
+          if (/^> hello master/.test(inp)) {
+            nc.write('title node\n');
+          } else {
+            var j = JSON.parse(inp);
+            assert.equal(j.name, 'node');
+            nc.end();
+            done();
+          }
+        });
+      });
+    });
+  });
+
   describe('fork', function() {
 
     var pid;
@@ -88,13 +205,14 @@ describe('commands', function() {
           if (/^> hello master/.test(inp)) {
             nc.write('ps\n');
           } else {
-            inp = JSON.parse(inp);
-            assert.equal(typeof inp.father, 'number');
-            assert.equal(Array.isArray(inp.child), true);
-            assert.ok(inp.child.indexOf(pid) >= 0);
-            assert.equal(inp.child.length, workers.length + 1);
-            assert.notDeepEqual(inp.child, workers);
-            workers = inp.child;
+            var j = JSON.parse(inp);
+            assert.equal(typeof j.father, 'number');
+            assert.equal(Array.isArray(j.child), true);
+            assert.ok(j.child.indexOf(pid) >= 0);
+            assert.equal(j.child.length, workers.length + 1);
+            assert.notDeepEqual(j.child, workers);
+            assert.equal(j.father, father);
+            workers = j.child;
             nc.end();
             done();
           }
