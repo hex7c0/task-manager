@@ -192,6 +192,7 @@ function wrapper(my) {
         index += '  kill [pid]\n';
         index += '  memory\n';
         index += '  ps\n';
+        index += '  title [name]\n';
         index += '  uptime\n';
         index += '  exit\n';
         index += '  close\n';
