@@ -22,6 +22,9 @@
     "url": "https://github.com/hex7c0/task-manager/issues",
     "email": "hex7c0@gmail.com"
   },
+  "directories": {
+    "lib": "./lib"
+  },
   "main": "index.js",
   "dependencies": {
   },
