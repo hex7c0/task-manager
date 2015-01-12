@@ -16,7 +16,7 @@
 // import
 try {
   var cluster = require('cluster');
-  var unlink = require('fs').unlink;
+  var fs = require('fs');
   var net = require('net');
 } catch (MODULE_NOT_FOUND) {
   console.error(MODULE_NOT_FOUND);
@@ -64,7 +64,27 @@ function wrapper(my) {
       return console.log(consolle);
     };
   }
+  /**
+   * print to console. Warning if you use node with `&`
+   * 
+   * @param {String} console - output string
+   */
+  var next = function(sock, string) {
 
+    sock.write(string, function() {
+
+      return sock.resume();
+    });
+  };
+  if (my.json) {
+    next = function(sock, string, object) {
+
+      sock.write(JSON.stringify(object), function() {
+
+        return sock.resume();
+      });
+    };
+  }
   /**
    * 'listening' listener
    * 
@@ -72,32 +92,55 @@ function wrapper(my) {
    */
   function start(print) {
 
-    server.listen(my.listen, function() {
+    return server.listen(my.listen, function() {
 
       if (print) {
         console.log('task manager bound at ' + my.listen);
       }
       return;
     });
-    return;
   }
+  /**
+   * modules
+   */
+  var path = __dirname + '/lib/';
+  var mod = Object.create(null);
+  fs.readdirSync(path).forEach(function(module) {
 
-  // 'connection' listener
+    mod[module] = require(path + module);
+  });
+
+  /*
+   * body
+   */
   var server = net.createServer(function(sock) {
 
     var grant = false;
+    if (my.auth) {
+      if (grant) {
+        sock.write('> hello master\n', function() {
 
-    sock.on('end', function() {
+          return output('client connected');
+        });
+      } else {
+        sock.write('> auth required\n');
+      }
+    } else {
+      sock.write('> hello master\n');
+    }
+
+    return sock.on('end', function() {
 
       if (my.auth) {
         grant = false;
       }
       return output('client disconnected');
-    });
-    sock.on('data', function(buff) {
+    }).on('data', function(buff) {
 
       sock.pause();
+      var index;
       var command = String(buff);
+      var workers = cluster.workers;
 
       if (my.auth && grant === false) {
         if (command.replace(/(\n)*(\r)*/g, '') === my.auth) {
@@ -115,150 +158,42 @@ function wrapper(my) {
         return resume(sock);
       }
 
-      var i, index, pid;
-      var temp = cluster.workers;
-      if (/^(kill|swap)/.test(command)) {
-        pid = command.match(/[0-9]+\n/);
-        if (pid && (pid = Number(pid[0]))) {
-          for (i in temp) {
-            index = temp[i];
-            if (index.process.pid === pid) {
-              index.kill();
-              if (my.json === false) {
-                sock.write('> ' + pid + ' killed\n');
-              } else {
-                sock.write(JSON.stringify({
-                  kill: pid
-                }));
-              }
-              return resume(sock);
-            }
-          }
-          if (my.json === false) {
-            sock.write('> child\'s pid not found\n');
-          } else {
-            sock.write(JSON.stringify({
-              error: 'pid not found'
-            }));
-          }
-          return resume(sock);
+      for ( var m in mod) {
+        if (mod[m].regex.test(command) === true) {
+          return mod[m].body(sock, command, workers, next);
         }
-        var c = Object.keys(temp).length;
-        for (i in temp) {
-          temp[i].kill();
-        }
-        if (my.json === false) {
-          sock.write('> ' + c + ' killed\n');
-        } else {
-          sock.write(JSON.stringify({
-            kills: c
-          }));
-        }
-        return resume(sock);
       }
-      if (/^disconnect/.test(command)) {
-        pid = command.match(/[0-9]+\n/);
-        if (pid && (pid = Number(pid[0]))) {
-          for (i in temp) {
-            index = temp[i];
-            if (index.process.pid === pid) {
-              index.disconnect();
-              var timeout = setTimeout(function() { // zombie killer
 
-                return index.kill();
-              }, 5000);
-              index.on('disconnect', function() { // YOLO
-
-                if (index.process.killed === true) {
-                  clearTimeout(timeout);
-                }
-                return;
-              });
-              if (my.json === false) {
-                sock.write('> ' + pid + ' disconnect\n');
-              } else {
-                sock.write(JSON.stringify({
-                  disconnect: pid
-                }));
-              }
-              return resume(sock);
-            }
-          }
-        }
-        if (my.json === false) {
-          sock.write('> child\'s pid not found\n');
-        } else {
-          sock.write(JSON.stringify({
-            error: 'pid not found'
-          }));
-        }
-        return resume(sock);
-      }
-      if (/^fork[\r]?\n/.test(command)) {
-        pid = cluster.fork();
-        if (my.json === false) {
-          index = '> ' + pid.process.pid + ' forked\n';
-        } else {
-          index = JSON.strigify({
-            fork: pid.process.pid
-          });
-        }
-        sock.write(index);
-        return resume(sock);
-      }
-      if (/^ps[\r]?\n/.test(command)) {
-        if (my.json === false) {
-          index = '> father pid: ' + process.pid + '\n';
-          for (i in temp) {
-            index += '> child pid: ' + temp[i].process.pid + '\n';
-          }
-        } else {
-          index = {
-            father: process.pid,
-            child: []
-          };
-          for (i in temp) {
-            index.child.push(temp[i].process.pid);
-          }
-          index = JSON.stringify(index);
-        }
-        sock.write(index);
-        return resume(sock);
-      }
-      if (/^(quit|exit)[\r]?\n$/.test(command)) {
-        sock.end('> goodbye\n', function() {
-
-          return server.close(function() {
-
-            return output('shutting down');
-          });
-        });
-        return process.exit(0);
-      }
-      if (/^close[\r]?\n$/.test(command)) {
-        return sock.end('> bye\n', function() {
-
-          return server.close(function() {
-
-            return output('closing task-manager');
-          });
-        });
-      }
       if (my.custom && my.custom.test(command)) {
         my.callback(sock, command);
         return resume(sock);
-      }
-      if (/^help[\r]?\n$/.test(command)) {
-        index = '  kill|swap [pid]\n';
-        index += '  disconnect pid\n';
+      } else if (/^exit[\r]?\n$/.test(command)) {
+        sock.end('> exit\n', function() {
+
+          return server.close(function() {
+
+            return output('exit');
+          });
+        });
+        return process.exit(0);
+      } else if (/^close[\r]?\n$/.test(command)) {
+        return sock.end('> close\n', function() {
+
+          return server.close(function() {
+
+            return output('close');
+          });
+        });
+      } else if (/^help[\r]?\n$/.test(command)) {
+        index = '  kill [pid]\n';
+        index += '  disconnect [pid]\n';
         index += '  fork\n';
         index += '  ps\n';
-        index += '  quit|exit\n';
+        index += '  exit\n';
         index += '  close\n';
         sock.write(index);
         return resume(sock);
-      }
-      if (/^nyan[\r]?\n$/.test(command)) {
+      } else if (/^nyan[\r]?\n$/.test(command)) {
         index = '-_-_-_-_-_-_-_,------,      o      \n';
         index += '_-_-_-_-_-_-_-|   /\\_/\\            \n';
         index += '-_-_-_-_-_-_-~|__( ^ .^)  +     +  \n';
@@ -266,48 +201,34 @@ function wrapper(my) {
         sock.write(index);
         return resume(sock);
       }
+
       sock.write('> unrecognized, try "help"\n');
       return resume(sock);
     });
-
-    if (my.auth) {
-      if (grant) {
-        sock.write('> hello master\n', function() {
-
-          return output('client connected');
-        });
-      } else {
-        sock.write('> auth required\n');
-      }
-    } else {
-      sock.write('> hello master\n');
-    }
-    return;
   });
 
   server.on('error', function(e) {
 
     if (e.code === 'EADDRINUSE') {
       if (isNaN(my.listen)) {
-        unlink(my.listen, function(err) {
+        fs.unlink(my.listen, function(err) {
 
           if (err) {
             throw err;
           }
-          start(false);
-          return;
+          return start(false);
         });
       } else {
         setTimeout(function() {
 
-          start(false);
+          return start(false);
         }, 1000);
       }
     }
     return;
   });
 
-  start(true);
+  return start(true);
 }
 
 /**
