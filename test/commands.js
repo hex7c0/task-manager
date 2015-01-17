@@ -5,8 +5,9 @@
  * @package task-manager
  * @subpackage test
  * @version 0.0.1
- * @author carniellifrancesco <carniellifrancesco@gmail.com>
- * @copyright gruppore 2014
+ * @author hex7c0 <hex7c0@gmail.com>
+ * @copyright hex7c0 2014
+ * @license GPLv3
  */
 
 /*
