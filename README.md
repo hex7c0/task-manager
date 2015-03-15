@@ -1,8 +1,10 @@
 # [task-manager](http://supergiovane.tk/#/task-manager)
 
-[![NPM version](https://badge.fury.io/js/task-manager.svg)](http://badge.fury.io/js/task-manager)
-[![Build Status](https://travis-ci.org/hex7c0/task-manager.svg)](https://travis-ci.org/hex7c0/task-manager)
-[![Dependency Status](https://david-dm.org/hex7c0/task-manager/status.svg)](https://david-dm.org/hex7c0/task-manager)
+[![NPM version](https://img.shields.io/npm/v/task-manager.svg)](https://www.npmjs.com/package/task-manager)
+[![Linux Status](https://img.shields.io/travis/hex7c0/task-manager.svg?label=linux)](https://travis-ci.org/hex7c0/task-manager)
+[![Windows Status](https://img.shields.io/appveyor/ci/hex7c0/task-manager.svg?label=windows)](https://ci.appveyor.com/project/hex7c0/task-manager)
+[![Dependency Status](https://img.shields.io/david/hex7c0/task-manager.svg)](https://david-dm.org/hex7c0/task-manager)
+[![Coveralls](https://img.shields.io/coveralls/hex7c0/task-manager.svg)](https://coveralls.io/r/hex7c0/task-manager)
 
 Task-manager for cluster or single application
 
@@ -29,7 +31,7 @@ inside nodejs project
 ```js
 var task = require('task-manager');
 
-task('s.sock');
+task('s.sock'); // use unix domain socket
 ```
 
 open client for send commands
@@ -104,7 +106,7 @@ close TCP/socket listener
 close
 ```
 
-### task(listen,[options])
+### task(listen [, options])
 
 #### listen
 
@@ -120,6 +122,6 @@ close
 
 ## Examples
 
-Take a look at my [examples](https://github.com/hex7c0/task-manager/tree/master/examples)
+Take a look at my [examples](examples)
 
-### [License GPLv3](http://opensource.org/licenses/GPL-3.0)
+### [License GPLv3](LICENSE)
