@@ -1,3 +1,9 @@
+v1.3.0 / 2015-03-15
+==================
+
+  * `iojs` test
+  * `coveralls` test
+
 v1.2.0 / 2014-01-12
 ==================
 
@@ -29,25 +35,25 @@ v1.0.1 / 2014-10-04
   * Remove jsdoc
   * `package.json` min
 
-1.0.0 / 2014-10-01
+v1.0.0 / 2014-10-01
 ==================
 
   * Working
   * Support for `close` command
 
-0.1.0 / 2014-09-21
+v0.1.0 / 2014-09-21
 ==================
 
   * Add "custom" (options)
   * Add "callback" (options)
   * Support for user custom command
 
-0.0.2 / 2014-09-16
+v0.0.2 / 2014-09-16
 ==================
 
   * Print after every command
 
-0.0.1 / 2014-09-14
+v0.0.1 / 2014-09-14
 ==================
 
   * Project start
