@@ -9,4 +9,4 @@ node server/socket.js &
 node server/tcp.js &
 
 # killer
-mocha -b --check-leaks *.js
+istanbul cover ../node_modules/mocha/bin/_mocha --report lcovonly -- *.js
