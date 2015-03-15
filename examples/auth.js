@@ -1,6 +1,6 @@
 'use strict';
 /**
- * @file socket example
+ * @file auth example
  * @module task-manager
  * @subpackage examples
  * @version 0.0.1
@@ -17,7 +17,9 @@ var http = require('http');
 /*
  * use
  */
-task('unix.sock');
+task('unix.sock', {
+  auth: 'pippo', // send command only if pass auth request
+});
 
 http.createServer(function(req, res) {
 

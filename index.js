@@ -2,9 +2,8 @@
 /**
  * @file task-manager main
  * @module task-manager
- * @package task-manager
  * @subpackage main
- * @version 1.1.0
+ * @version 1.3.0
  * @author hex7c0 <hex7c0@gmail.com>
  * @copyright hex7c0 2014
  * @license GPLv3
@@ -13,15 +12,9 @@
 /*
  * initialize module
  */
-// import
-try {
-  var cluster = require('cluster');
-  var fs = require('fs');
-  var net = require('net');
-} catch (MODULE_NOT_FOUND) {
-  console.error(MODULE_NOT_FOUND);
-  process.exit(1);
-}
+var cluster = require('cluster');
+var fs = require('fs');
+var net = require('net');
 
 /*
  * functions
