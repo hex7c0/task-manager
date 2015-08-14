@@ -45,5 +45,5 @@
     "test": "./test/test.sh",
     "test-cov": "./test/test-cov.sh"
   },
-  "license": "GPLv3"
+  "license": "GPL-3.0"
 }
