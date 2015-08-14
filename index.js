@@ -213,7 +213,7 @@ function wrapper(my) {
 
   server.on('error', function(e) {
 
-    if (e.code === 'EADDRINUSE') {
+    if (e.code === 'EADDRINUSE' || e.code === 'ECONNREFUSED') {
       if (isNaN(my.listen)) {
         fs.unlink(my.listen, function(err) {
 
