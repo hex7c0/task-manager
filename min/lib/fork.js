@@ -9,4 +9,4 @@ function fork(sock, command, workers, next) {
 
 var cluster = require("cluster");
 
-module.exports.body = fork, module.exports.regex = /^fork[\r]?\n/;
+module.exports.body = fork, module.exports.regex = /^fork[\r]?\n$/i;

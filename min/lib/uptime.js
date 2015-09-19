@@ -7,4 +7,4 @@ function uptime(sock, command, workers, next) {
     });
 }
 
-module.exports.body = uptime, module.exports.regex = /^uptime[\r]?\n/;
+module.exports.body = uptime, module.exports.regex = /^uptime[\r]?\n$/i;

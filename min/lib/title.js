@@ -1,11 +1,11 @@
 "use strict";
 
 function title(sock, command, workers, next) {
-    var command = command.replace(/^title[ ]?/, ""), name = command.match(/^[A-Za-z0-9]+/);
+    var command = command.replace(/^title[ ]?/i, ""), name = command.match(/^[a-z0-9]+/i);
     return name && (name = String(name[0])) && (process.title = name), name = process.title, 
     next(sock, "> title: " + name + "\n", {
         name: name
     });
 }
 
-module.exports.body = title, module.exports.regex = /^title/;
+module.exports.body = title, module.exports.regex = /^title/i;
