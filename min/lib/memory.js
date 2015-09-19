@@ -1,9 +1,11 @@
 "use strict";
 
 function memory(sock, command, workers, next) {
-    var m = process.memoryUsage(), index = "";
-    for (var i in m) index += "> " + i + ": " + m[i] + "\n";
-    return next(sock, index, m);
+    for (var memory = process.memoryUsage(), keys = Object.keys(memory), output = "", i = 0, ii = keys.length; ii > i; ++i) {
+        var index = memory[keys[i]];
+        output += "> " + keys[i] + ": " + index + "\n";
+    }
+    return next(sock, output, memory);
 }
 
-module.exports.body = memory, module.exports.regex = /^memory[\r]?\n/;
+module.exports.body = memory, module.exports.regex = /^memory[\r]?\n$/i;

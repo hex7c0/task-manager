@@ -1,15 +1,14 @@
 "use strict";
 
 function ps(sock, command, workers, next) {
-    var s = "> father pid: " + process.pid + "\n", o = {
+    for (var keys = Object.keys(workers), outputString = "> father pid: " + process.pid + "\n", outputArray = {
         father: process.pid,
         child: []
-    };
-    for (var i in workers) {
-        var worker = workers[i].process.pid;
-        s += "> child pid: " + worker + "\n", o.child.push(worker);
+    }, i = 0, ii = keys.length; ii > i; ++i) {
+        var index = workers[keys[i]], workerPid = index.process.pid;
+        outputString += "> child pid: " + workerPid + "\n", outputArray.child.push(workerPid);
     }
-    return next(sock, s, o);
+    return next(sock, outputString, outputArray);
 }
 
-module.exports.body = ps, module.exports.regex = /^ps[\r]?\n/;
+module.exports.body = ps, module.exports.regex = /^ps[\r]?\n$/i;
