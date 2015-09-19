@@ -57,6 +57,7 @@ function wrapper(my) {
       return console.log(consolle);
     };
   }
+
   /**
    * print to console. Warning if you use node with `&`
    * 
@@ -78,6 +79,7 @@ function wrapper(my) {
       });
     };
   }
+
   /**
    * 'listening' listener
    * 
@@ -93,6 +95,16 @@ function wrapper(my) {
       return;
     });
   }
+
+  /**
+   * command regex
+   */
+  var commandRegex = /(\r)*(\n)*/g;
+  var exitRegex = /^exit[\r]?\n$/i;
+  var closeRegex = /^close[\r]?\n$/i;
+  var helpRegex = /^help[\r]?\n$/i;
+  var nyanRegex = /^nyan[\r]?\n$/;
+
   /**
    * modules
    */
@@ -101,9 +113,10 @@ function wrapper(my) {
   fs.readdirSync(path).forEach(function(module) {
 
     mod[module] = require(path + module);
+    return;
   });
 
-  /*
+  /**
    * body
    */
   var server = net.createServer(function(sock) {
@@ -135,14 +148,15 @@ function wrapper(my) {
       var command = String(buff);
       var workers = cluster.workers;
 
-      if (my.auth && grant === false) {
-        if (command.replace(/(\n)*(\r)*/g, '') === my.auth) {
+      if (my.auth && grant === false) { // auth middleware
+        if (command.replace(commandRegex, '') === my.auth) {
           grant = true;
           sock.write('> hello master\n', function() {
 
             output('client connected');
             return resume(sock);
           });
+
         } else {
           sock.write('> auth required\n', function() {
 
@@ -153,7 +167,7 @@ function wrapper(my) {
         return;
       }
 
-      for ( var m in mod) {
+      for ( var m in mod) { // every lib
         if (mod[m].regex.test(command) === true) {
           return mod[m].body(sock, command, workers, next);
         }
@@ -162,7 +176,8 @@ function wrapper(my) {
       if (my.custom && my.custom.test(command)) {
         my.callback(sock, command);
         return resume(sock);
-      } else if (/^exit[\r]?\n$/.test(command)) {
+
+      } else if (exitRegex.test(command)) {
         sock.end('> exit\n', function() {
 
           return server.close(function() {
@@ -171,7 +186,8 @@ function wrapper(my) {
           });
         });
         return process.exit(0);
-      } else if (/^close[\r]?\n$/.test(command)) {
+
+      } else if (closeRegex.test(command)) {
         return sock.end('> close\n', function() {
 
           return server.close(function() {
@@ -179,7 +195,8 @@ function wrapper(my) {
             return output('close');
           });
         });
-      } else if (/^help[\r]?\n$/.test(command)) {
+
+      } else if (helpRegex.test(command)) {
         index = '  disconnect [pid]\n';
         index += '  fork\n';
         index += '  kill [pid]\n';
@@ -193,7 +210,8 @@ function wrapper(my) {
 
           return resume(sock);
         });
-      } else if (/^nyan[\r]?\n$/.test(command)) {
+
+      } else if (nyanRegex.test(command)) {
         index = '-_-_-_-_-_-_-_,------,      o      \n';
         index += '_-_-_-_-_-_-_-|   /\\_/\\            \n';
         index += '-_-_-_-_-_-_-~|__( ^ .^)  +     +  \n';
@@ -214,7 +232,7 @@ function wrapper(my) {
   server.on('error', function(e) {
 
     if (e.code === 'EADDRINUSE' || e.code === 'ECONNREFUSED') {
-      if (isNaN(my.listen)) {
+      if (isNaN(my.listen)) { // domain socket
         fs.unlink(my.listen, function(err) {
 
           if (err) {
@@ -222,7 +240,7 @@ function wrapper(my) {
           }
           return start(false);
         });
-      } else {
+      } else { // tcp port
         setTimeout(function() {
 
           return start(false);
