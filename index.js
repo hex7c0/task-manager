@@ -56,6 +56,8 @@ function wrapperTCP(my) {
 
   var net = require('net');
   var mod = load();
+  var keys = Object.keys(mod);
+  var ii = keys.length;
 
   /*
    * closure
@@ -178,9 +180,10 @@ function wrapperTCP(my) {
         return;
       }
 
-      for ( var m in mod) { // every lib
-        if (mod[m].regex.test(command) === true) {
-          return mod[m].body(sock, command, workers, next);
+      for (var i = 0; i < ii; ++i) { // every lib
+        var m = mod[keys[i]];
+        if (m.regex.test(command) === true) {
+          return m.body(sock, command, workers, next);
         }
       }
 
@@ -275,6 +278,8 @@ function wrapperUDP(my) {
 
   var dgram = require('dgram');
   var mod = load();
+  var keys = Object.keys(mod);
+  var ii = keys.length;
 
   /*
    * closure
@@ -356,9 +361,10 @@ function wrapperUDP(my) {
     var command = String(buff);
     var workers = cluster.workers;
 
-    for ( var m in mod) { // every lib
-      if (mod[m].regex.test(command) === true) {
-        return mod[m].body(sock, command, workers, next);
+    for (var i = 0; i < ii; ++i) { // every lib
+      var m = mod[keys[i]];
+      if (m.regex.test(command) === true) {
+        return m.body(sock, command, workers, next);
       }
     }
 
