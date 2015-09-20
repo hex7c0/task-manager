@@ -14,30 +14,48 @@
  */
 var cluster = require('cluster');
 var fs = require('fs');
-var net = require('net');
+
+/*
+ * command regex
+ */
+var commandRegex = /(\r)*(\n)*/g;
+var exitRegex = /^exit[\r]?\n$/i;
+var closeRegex = /^close[\r]?\n$/i;
+var helpRegex = /^help[\r]?\n$/i;
+var nyanRegex = /^nyan[\r]?\n$/;
 
 /*
  * functions
  */
 /**
- * resume reading
+ * modules builder
  * 
- * @function resume
- * @param {Object} socket - socket connection
+ * @returns {Object}
  */
-function resume(sock) {
+function load() {
 
-  return sock.resume();
+  var path = __dirname + '/min/lib/';
+  var mod = Object.create(null);
+  fs.readdirSync(path).forEach(function(module) {
+
+    mod[module] = require(path + module);
+    return;
+  });
+
+  return mod;
 }
 
 /**
- * function wrapper for multiple require
+ * TCP builder
  * 
  * @function wrapper
  * @param {Object} my - options
  * @return {Object}
  */
-function wrapper(my) {
+function wrapperTCP(my) {
+
+  var net = require('net');
+  var mod = load();
 
   /*
    * closure
@@ -45,7 +63,7 @@ function wrapper(my) {
   /**
    * print to console. Warning if you use node with `&`
    * 
-   * @param {String} console - output string
+   * @param {String} [console] - output string
    */
   var output = function() {
 
@@ -59,9 +77,22 @@ function wrapper(my) {
   }
 
   /**
+   * resume reading
+   * 
+   * @function resume
+   * @param {Object} socket - socket connection
+   */
+  function resume(sock) {
+
+    return sock.resume();
+  }
+
+  /**
    * print to console. Warning if you use node with `&`
    * 
-   * @param {String} console - output string
+   * @param {Object} sock - socket data
+   * @param {String} string - message string
+   * @param {Object} [object] - json data
    */
   var next = function(sock, string) {
 
@@ -90,31 +121,11 @@ function wrapper(my) {
     return server.listen(my.listen, function() {
 
       if (print) {
-        console.log('task manager bound at ' + my.listen);
+        console.log('task manager bound at TCP:' + my.listen);
       }
       return;
     });
   }
-
-  /**
-   * command regex
-   */
-  var commandRegex = /(\r)*(\n)*/g;
-  var exitRegex = /^exit[\r]?\n$/i;
-  var closeRegex = /^close[\r]?\n$/i;
-  var helpRegex = /^help[\r]?\n$/i;
-  var nyanRegex = /^nyan[\r]?\n$/;
-
-  /**
-   * modules
-   */
-  var path = __dirname + '/min/lib/';
-  var mod = Object.create(null);
-  fs.readdirSync(path).forEach(function(module) {
-
-    mod[module] = require(path + module);
-    return;
-  });
 
   /**
    * body
@@ -232,7 +243,7 @@ function wrapper(my) {
   server.on('error', function(e) {
 
     if (e.code === 'EADDRINUSE' || e.code === 'ECONNREFUSED') {
-      if (isNaN(my.listen)) { // domain socket
+      if (~~my.listen === 0) { // domain socket
         fs.unlink(my.listen, function(err) {
 
           if (err) {
@@ -246,6 +257,164 @@ function wrapper(my) {
           return start(false);
         }, 1000);
       }
+    }
+    return;
+  });
+
+  return start(true);
+}
+
+/**
+ * UDP builder
+ * 
+ * @function wrapper
+ * @param {Object} my - options
+ * @return {Object}
+ */
+function wrapperUDP(my) {
+
+  var dgram = require('dgram');
+  var mod = load();
+
+  /*
+   * closure
+   */
+  /**
+   * print to console. Warning if you use node with `&`
+   * 
+   * @param {String} [console] - output string
+   */
+  var output = function() {
+
+    return;
+  };
+  if (my.output) {
+    output = function(consolle) {
+
+      return console.log(consolle);
+    };
+  }
+
+  /**
+   * send a message to UDP client
+   * 
+   * @param {String} string - message string. cast to Buffer
+   * @param {Object} sock - client socket data
+   * @param {Function} [next] - next callback
+   */
+  function write(string, sock, next) {
+
+    var message = new Buffer(string);
+    return sock.server.send(message, 0, message.length, sock.port,
+      sock.address, function(err) {
+
+        return next ? next(err) : null;
+      });
+  }
+
+  /**
+   * print to console. Warning if you use node with `&`
+   * 
+   * @param {Object} sock - socket data
+   * @param {String} string - message string
+   * @param {Object} [object] - json data
+   */
+  var next = function(sock, string) {
+
+    return write(string, sock);
+  };
+  if (my.json) {
+    next = function(sock, string, object) {
+
+      return write(JSON.stringify(object), sock);
+    };
+  }
+
+  /**
+   * 'listening' listener
+   * 
+   * @param {Boolean} print - if print info
+   */
+  function start(print) {
+
+    return server.bind(my.listen, function() {
+
+      if (print) {
+        console.log('task manager bound at UDP:' + my.listen);
+      }
+      return;
+    });
+  }
+
+  /**
+   * body
+   */
+  var server = dgram.createSocket('udp4', function(buff, sock) {
+
+    sock.server = server; // dgram socket
+    var index;
+    var command = String(buff);
+    var workers = cluster.workers;
+
+    for ( var m in mod) { // every lib
+      if (mod[m].regex.test(command) === true) {
+        return mod[m].body(sock, command, workers, next);
+      }
+    }
+
+    if (my.custom && my.custom.test(command)) {
+      my.callback(sock, command);
+      return;
+
+    } else if (exitRegex.test(command)) {
+      write('> exit\n', sock, function() {
+
+        return server.close(function() {
+
+          return output('exit');
+        });
+      });
+      return process.exit(0);
+
+    } else if (closeRegex.test(command)) {
+      return write('> close\n', sock, function() {
+
+        return server.close(function() {
+
+          return output('close');
+        });
+      });
+
+    } else if (helpRegex.test(command)) {
+      index = '  disconnect [pid]\n';
+      index += '  fork\n';
+      index += '  kill [pid]\n';
+      index += '  memory\n';
+      index += '  ps\n';
+      index += '  title [name]\n';
+      index += '  uptime\n';
+      index += '  exit\n';
+      index += '  close\n';
+      return write(index, sock);
+
+    } else if (nyanRegex.test(command)) {
+      index = '-_-_-_-_-_-_-_,------,      o      \n';
+      index += '_-_-_-_-_-_-_-|   /\\_/\\            \n';
+      index += '-_-_-_-_-_-_-~|__( ^ .^)  +     +  \n';
+      index += '_-_-_-_-_-_-_-""  ""               \n';
+      return write(index, sock);
+    }
+
+    return write('> unrecognized, try "help"\n', sock, null, server);
+  });
+
+  server.on('error', function(e) {
+
+    if (e.code === 'EADDRINUSE' || e.code === 'ECONNREFUSED') {
+      setTimeout(function() {
+
+        return start(false);
+      }, 1000);
     }
     return;
   });
@@ -285,6 +454,14 @@ function task(listen, opt) {
   } else {
     my.custom = false;
   }
-  return wrapper(my);
+
+  if (Boolean(options.udp) === true) {
+    if (~~what === 0) { // 0 if not a number
+      throw new TypeError('required a port number for UDP connection');
+    }
+    return wrapperUDP(my);
+  }
+
+  return wrapperTCP(my);
 }
 module.exports = task;
