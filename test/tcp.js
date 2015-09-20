@@ -13,23 +13,16 @@
 /*
  * initialize module
  */
-// import
-try {
-  var assert = require('assert');
-  var net = require('net');
-} catch (MODULE_NOT_FOUND) {
-  console.error(MODULE_NOT_FOUND);
-  process.exit(1);
-}
-// load
+var assert = require('assert');
+var net = require('net');
 var p = 20003;
 
 /*
  * test module
  */
-describe('tcp', function() {
-
-  describe('client', function() {
+describe(
+  'tcp',
+  function() {
 
     it('auth', function(done) {
 
@@ -52,13 +45,11 @@ describe('tcp', function() {
               nc.write('ciao\n');
             }
           } else if (/^> hello master/.test(inp)) {
-            nc.end();
-            done();
+            nc.end(done);
           }
         });
       });
     });
-
     it('unrecognized', function(done) {
 
       var c = 0;
@@ -81,37 +72,39 @@ describe('tcp', function() {
               nc.write('forkk');
             }
             if (c++ >= 3) {
-              nc.end();
-              done();
+              nc.end(done);
             }
           }
         });
       });
     });
+    it(
+      'ps',
+      function(done) {
 
-    it('ps', function(done) {
+        var nc = net
+            .connect(
+              p,
+              function() {
 
-      var nc = net
-          .connect(p, function() {
+                nc.setNoDelay(true);
+                nc
+                    .on(
+                      'data',
+                      function(buff) {
 
-            nc.setNoDelay(true);
-            nc
-                .on('data', function(buff) {
-
-                  var inp = String(buff);
-                  if (/^> auth required/.test(inp)) {
-                    nc.write('ciao');
-                  } else if (/^> hello master/.test(inp)) {
-                    nc.write('ps\n');
-                  } else if (/^> father pid: [0-9]+\n> child pid: [0-9]+\n> child pid: [0-9]+\n/
-                      .test(inp)) {
-                    nc.end();
-                    done();
-                  }
-                });
-          });
-    });
-
+                        var inp = String(buff);
+                        if (/^> auth required/.test(inp)) {
+                          nc.write('ciao');
+                        } else if (/^> hello master/.test(inp)) {
+                          nc.write('ps\n');
+                        } else if (/^> father pid: [0-9]+\n> child pid: [0-9]+\n> child pid: [0-9]+\n/
+                            .test(inp)) {
+                          nc.end(done);
+                        }
+                      });
+              });
+      });
     it('fork', function(done) {
 
       var pid;
@@ -133,13 +126,11 @@ describe('tcp', function() {
               reg = new RegExp('> ' + pid + ' killed\n');
             }
           } else if (reg.test(inp)) {
-            nc.end();
-            done();
+            nc.end(done);
           }
         });
       });
     });
-
     it('exit', function(done) {
 
       var nc = net.connect(p, function() {
@@ -154,11 +145,7 @@ describe('tcp', function() {
             nc.write('exit\n');
           }
         });
-        nc.on('close', function() {
-
-          done();
-        });
+        nc.on('close', done);
       });
     });
   });
-});

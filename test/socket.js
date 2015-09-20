@@ -13,24 +13,17 @@
 /*
  * initialize module
  */
-// import
-try {
-  var assert = require('assert');
-  var fs = require('fs');
-  var net = require('net');
-} catch (MODULE_NOT_FOUND) {
-  console.error(MODULE_NOT_FOUND);
-  process.exit(1);
-}
-// load
+var assert = require('assert');
+var fs = require('fs');
+var net = require('net');
 var p = 'test.sock';
 
 /*
  * test module
  */
-describe('socket', function() {
-
-  describe('client', function() {
+describe(
+  'socket',
+  function() {
 
     it('auth', function(done) {
 
@@ -90,28 +83,34 @@ describe('socket', function() {
       });
     });
 
-    it('ps', function(done) {
+    it(
+      'ps',
+      function(done) {
 
-      var nc = net
-          .connect(p, function() {
+        var nc = net
+            .connect(
+              p,
+              function() {
 
-            nc.setNoDelay(true);
-            nc
-                .on('data', function(buff) {
+                nc.setNoDelay(true);
+                nc
+                    .on(
+                      'data',
+                      function(buff) {
 
-                  var inp = String(buff);
-                  if (/^> auth required/.test(inp)) {
-                    nc.write('ciao');
-                  } else if (/^> hello master/.test(inp)) {
-                    nc.write('ps\n');
-                  } else if (/^> father pid: [0-9]+\n> child pid: [0-9]+\n> child pid: [0-9]+\n/
-                      .test(inp)) {
-                    nc.end();
-                    done();
-                  }
-                });
-          });
-    });
+                        var inp = String(buff);
+                        if (/^> auth required/.test(inp)) {
+                          nc.write('ciao');
+                        } else if (/^> hello master/.test(inp)) {
+                          nc.write('ps\n');
+                        } else if (/^> father pid: [0-9]+\n> child pid: [0-9]+\n> child pid: [0-9]+\n/
+                            .test(inp)) {
+                          nc.end();
+                          done();
+                        }
+                      });
+              });
+      });
 
     it('fork', function(done) {
 
@@ -161,18 +160,12 @@ describe('socket', function() {
         });
       });
     });
-  });
 
-  describe('remove', function() {
+    describe('remove', function() {
 
-    it('sock', function(done) {
+      it('sock', function(done) {
 
-      fs.unlink(p, function(err) {
-
-        if (err)
-          throw err;
-        done();
+        fs.unlink(p, done);
       });
     });
   });
-});

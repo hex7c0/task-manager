@@ -13,15 +13,8 @@
 /*
  * initialize module
  */
-// import
-try {
-  var assert = require('assert');
-  var net = require('net');
-} catch (MODULE_NOT_FOUND) {
-  console.error(MODULE_NOT_FOUND);
-  process.exit(1);
-}
-// load
+var assert = require('assert');
+var net = require('net');
 var p = 20001;
 
 /*
@@ -48,8 +41,7 @@ describe('commands', function() {
           assert.equal(Array.isArray(j.child), true);
           father = j.father;
           workers = j.child;
-          nc.end();
-          done();
+          nc.end(done);
         }
       });
     });
@@ -69,8 +61,7 @@ describe('commands', function() {
             nc.write('memory\n');
           } else {
             assert.equal(typeof JSON.parse(inp), 'object');
-            nc.end();
-            done();
+            nc.end(done);
           }
         });
       });
@@ -107,8 +98,7 @@ describe('commands', function() {
           } else {
             var j = JSON.parse(inp);
             assert.equal(j.name, 'node');
-            nc.end();
-            done();
+            nc.end(done);
           }
         });
       });
@@ -145,8 +135,7 @@ describe('commands', function() {
           } else {
             var j = JSON.parse(inp);
             assert.equal(j.name, 'Ciao');
-            nc.end();
-            done();
+            nc.end(done);
           }
         });
       });
@@ -164,8 +153,7 @@ describe('commands', function() {
           } else {
             var j = JSON.parse(inp);
             assert.equal(j.name, 'node');
-            nc.end();
-            done();
+            nc.end(done);
           }
         });
       });
@@ -189,8 +177,7 @@ describe('commands', function() {
             var j = JSON.parse(inp);
             assert.equal(typeof j.fork, 'number');
             pid = j.fork;
-            nc.end();
-            done();
+            nc.end(done);
           }
         });
       });
@@ -214,8 +201,7 @@ describe('commands', function() {
             assert.notDeepEqual(j.child, workers);
             assert.equal(j.father, father);
             workers = j.child;
-            nc.end();
-            done();
+            nc.end(done);
           }
         });
       });
@@ -237,8 +223,7 @@ describe('commands', function() {
           } else {
             var j = JSON.parse(inp);
             assert.equal(j.kill, workers.length);
-            nc.end();
-            done();
+            nc.end(done);
           }
         });
       });
@@ -262,8 +247,7 @@ describe('commands', function() {
               assert.equal(inp.child.length, workers.length);
               assert.notDeepEqual(inp.child, workers);
               workers = inp.child;
-              nc.end();
-              done();
+              nc.end(done);
             }
           });
         });
@@ -282,8 +266,7 @@ describe('commands', function() {
           } else {
             var j = JSON.parse(inp);
             assert.equal(j.kill, workers[0]);
-            nc.end();
-            done();
+            nc.end(done);
           }
         });
       });
@@ -307,8 +290,7 @@ describe('commands', function() {
               assert.equal(inp.child.length, workers.length);
               assert.notDeepEqual(inp.child, workers);
               workers = inp.child;
-              nc.end();
-              done();
+              nc.end(done);
             }
           });
         });
@@ -331,8 +313,7 @@ describe('commands', function() {
           } else {
             var j = JSON.parse(inp);
             assert.equal(j.disconnect, workers.length);
-            nc.end();
-            done();
+            nc.end(done);
           }
         });
       });
@@ -356,8 +337,7 @@ describe('commands', function() {
               assert.equal(inp.child.length, workers.length);
               assert.notDeepEqual(inp.child, workers);
               workers = inp.child;
-              nc.end();
-              done();
+              nc.end(done);
             }
           });
         });
@@ -376,8 +356,7 @@ describe('commands', function() {
           } else {
             var j = JSON.parse(inp);
             assert.equal(j.disconnect, workers[0]);
-            nc.end();
-            done();
+            nc.end(done);
           }
         });
       });
@@ -401,8 +380,7 @@ describe('commands', function() {
               assert.equal(inp.child.length, workers.length);
               assert.notDeepEqual(inp.child, workers);
               workers = inp.child;
-              nc.end();
-              done();
+              nc.end(done);
             }
           });
         });

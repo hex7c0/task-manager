@@ -12,16 +12,9 @@
 /*
  * initialize module
  */
-// import
-try {
-  var task = require('../../'); // use require('task-manager')
-  var cluster = require('cluster');
-  var http = require('http');
-} catch (MODULE_NOT_FOUND) {
-  console.error(MODULE_NOT_FOUND);
-  process.exit(1);
-}
-// load
+var task = require('../../'); // use require('task-manager')
+var cluster = require('cluster');
+var http = require('http');
 var p = 'test.sock';
 
 /*
