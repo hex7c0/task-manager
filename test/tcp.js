@@ -13,6 +13,7 @@
 /*
  * initialize module
  */
+var task = require('..'); // use require('task-manager')
 var assert = require('assert');
 var net = require('net');
 var p = 20003;
@@ -146,6 +147,23 @@ describe(
           }
         });
         nc.on('close', done);
+      });
+    });
+
+    describe('error', function() {
+
+      it('should throw an Exception if missing "listen"', function(done) {
+
+        assert.throws(function() {
+
+          task();
+        }, function(err) {
+
+          if ((err instanceof TypeError) && /listen required/.test(err)) {
+            return true;
+          }
+        });
+        done();
       });
     });
   });

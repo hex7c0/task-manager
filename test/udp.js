@@ -13,6 +13,7 @@
 /*
  * initialize module
  */
+var task = require('..'); // use require('task-manager')
 var assert = require('assert');
 var dgram = require('dgram');
 var p = 20004;
@@ -136,6 +137,27 @@ describe('udp', function() {
       var inp = String(buff);
       write('exit\n', sock);
       done(); // don't catch socket close on UDP
+    });
+  });
+
+  describe('error', function() {
+
+    it('should throw an Exception if port is not a Integer', function(done) {
+
+      assert.throws(function() {
+
+        task('foobar', {
+          output: false,
+          udp: true
+        });
+      }, function(err) {
+
+        if ((err instanceof TypeError)
+          && /required a port number for UDP connection/.test(err)) {
+          return true;
+        }
+      });
+      done();
     });
   });
 });
