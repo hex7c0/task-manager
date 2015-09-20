@@ -5,12 +5,9 @@
 [![Dependency Status](https://img.shields.io/david/hex7c0/task-manager.svg)](https://david-dm.org/hex7c0/task-manager)
 [![Coveralls](https://img.shields.io/coveralls/hex7c0/task-manager.svg)](https://coveralls.io/r/hex7c0/task-manager)
 
-Task-manager for cluster or single application
+Task-manager for cluster or single application, through TCP, UDP, [Unix domain](http://en.wikipedia.org/wiki/Unix_domain_socket) socket.
 
-Use `nc` for [Unix domain socket](http://en.wikipedia.org/wiki/Unix_domain_socket)
-
-Use `telnet` or `TCP` software for `TCP port`
-
+Use [`nc`](https://en.wikipedia.org/wiki/Netcat), `Telnet` or whatever you want as client
 
 ## Installation
 
@@ -26,11 +23,35 @@ git clone git://github.com/hex7c0/task-manager.git
 
 ## API
 
-inside nodejs project
+for TCP socket
 ```js
 var task = require('task-manager');
 
-task('s.sock'); // use unix domain socket
+task(30000); // tcp port
+```
+
+open client for send commands
+```bash
+$ nc 127.0.0.1 30000
+```
+
+for UDP socket
+```js
+var task = require('task-manager');
+
+task(30000); // udp port
+```
+
+open client for send commands
+```bash
+$ nc -u 127.0.0.1 30000
+```
+
+for unix domain socket
+```js
+var task = require('task-manager');
+
+task('s.sock'); // unix domain socket string
 ```
 
 open client for send commands
@@ -118,6 +139,7 @@ close
  - `custom`- **String | RegExp** Custom validation for client command (after built-in command) *(default "disabled")*
  - `callback`- **Function** Execute this function, if `custom` command is accepted (socket and command as arguments) *(default "disabled")*
  - `json`- **Boolean** Flag for print info in JSON *(default "disabled")*
+ - `udp`- **Boolean** Flag for use UDP socket *(default "disabled")*
 
 ## Examples
 
