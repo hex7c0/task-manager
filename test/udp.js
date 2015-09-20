@@ -37,7 +37,7 @@ describe('udp', function() {
   beforeEach(function(done) {
 
     server = dgram.createSocket('udp4');
-    server.bind(); // random port
+    server.bind(Math.floor((Math.random() * 10000) + 1000)); // random port for Node@0.10
     done();
   });
 
