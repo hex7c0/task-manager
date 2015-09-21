@@ -145,6 +145,19 @@ describe('udp', function() {
 
   describe('error', function() {
 
+    it('should throw an Exception if missing "listen"', function(done) {
+
+      assert.throws(function() {
+
+        task();
+      }, function(err) {
+
+        if ((err instanceof TypeError) && /listen required/.test(err)) {
+          return true;
+        }
+      });
+      done();
+    });
     it('should throw an Exception if port is not a Integer', function(done) {
 
       assert.throws(function() {
