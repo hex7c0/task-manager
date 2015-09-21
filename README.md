@@ -5,9 +5,9 @@
 [![Dependency Status](https://img.shields.io/david/hex7c0/task-manager.svg)](https://david-dm.org/hex7c0/task-manager)
 [![Coveralls](https://img.shields.io/coveralls/hex7c0/task-manager.svg)](https://coveralls.io/r/hex7c0/task-manager)
 
-Task-manager for cluster or single application, through TCP, UDP, [Unix domain](http://en.wikipedia.org/wiki/Unix_domain_socket) socket.
+Task-manager for cluster or single application, through TCP, TLS, UDP, [Unix domain](http://en.wikipedia.org/wiki/Unix_domain_socket) socket.
 
-Use [`nc`](https://en.wikipedia.org/wiki/Netcat), `Telnet` or whatever you want as client
+Use [`nc`](https://en.wikipedia.org/wiki/Netcat), `openssl`, `Telnet` or whatever you want as client
 
 ## Installation
 
@@ -35,11 +35,29 @@ open client for send commands
 $ nc 127.0.0.1 30000
 ```
 
+for TLS socket
+```js
+var task = require('task-manager');
+
+task(30000, {
+  tls: {
+    key: ''
+  }
+}); // tls port and cert key
+```
+
+open client for send commands
+```bash
+$ openssl s_client -connect 127.0.0.1:30000
+```
+
 for UDP socket
 ```js
 var task = require('task-manager');
 
-task(30000); // udp port
+task(30000, {
+  udp: true
+}); // udp port
 ```
 
 open client for send commands
@@ -130,7 +148,7 @@ close
 
 #### listen
 
- - `listen`- **Number | String** Number for `TCP port`, String (path) for `sock` *(default "required")*
+ - `listen`- **Number | String** Number for `TCP, TLS, UDP port`, String (path) for `Unix Domain socket` *(default "required")*
 
 #### [options]
 
@@ -139,6 +157,7 @@ close
  - `custom`- **String | RegExp** Custom validation for client command (after built-in command) *(default "disabled")*
  - `callback`- **Function** Execute this function, if `custom` command is accepted (socket and command as arguments) *(default "disabled")*
  - `json`- **Boolean** Flag for print info in JSON *(default "disabled")*
+ - `tls`- **Object** [TLS options](https://nodejs.org/api/tls.html#tls_tls_createserver_options_secureconnectionlistener) *(default "disabled")*
  - `udp`- **Boolean** Flag for use UDP socket *(default "disabled")*
 
 ## Examples
