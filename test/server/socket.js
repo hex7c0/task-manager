@@ -15,7 +15,7 @@
 var task = require('../../'); // use require('task-manager')
 var cluster = require('cluster');
 var http = require('http');
-var p = 'test.sock';
+var p = 20002;
 
 /*
  * use
@@ -25,7 +25,7 @@ if (cluster.isMaster) {
   cluster.fork();
   cluster.fork();
 
-  task(p, {
+  task('test.sock', {
     output: false,
     auth: 'ciao'
   });
@@ -38,10 +38,10 @@ if (cluster.isWorker) {
       'Content-Type': 'text/plain'
     });
     res.end('Hello World\n');
-  }).listen(3002, '127.0.0.1');
+  }).listen(p - 10000, '127.0.0.1');
 }
 
 setTimeout(function() { // autokiller
 
   return process.exit(1);
-}, 20002);
+}, p);

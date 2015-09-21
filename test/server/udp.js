@@ -15,7 +15,7 @@
 var task = require('../../'); // use require('task-manager')
 var cluster = require('cluster');
 var http = require('http');
-var p = 20004;
+var p = 20005;
 
 /*
  * use
@@ -38,7 +38,7 @@ if (cluster.isWorker) {
       'Content-Type': 'text/plain'
     });
     res.end('Hello World\n');
-  }).listen(3004, '127.0.0.1');
+  }).listen(p - 10000, '127.0.0.1');
 }
 
 setTimeout(function() { // autokiller

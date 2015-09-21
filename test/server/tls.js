@@ -16,7 +16,8 @@ var task = require('../../'); // use require('task-manager')
 var cluster = require('cluster');
 var http = require('http');
 var fs = require('fs');
-var p = 20005;
+var path = require('path');
+var p = 20004;
 
 /*
  * use
@@ -30,8 +31,10 @@ if (cluster.isMaster) {
     output: false,
     auth: 'ciao',
     tls: {
-      key: fs.readFileSync('../../examples/test_key.pem'),
-      cert: fs.readFileSync('../../examples/test_cert.pem')
+      key: fs.readFileSync(path.join(__dirname, '../../examples',
+        'test_key.pem')),
+      cert: fs.readFileSync(path.join(__dirname, '../../examples',
+        'test_cert.pem')),
     }
   });
 }
@@ -43,7 +46,7 @@ if (cluster.isWorker) {
       'Content-Type': 'text/plain'
     });
     res.end('Hello World\n');
-  }).listen(3005, '127.0.0.1');
+  }).listen(p - 10000, '127.0.0.1');
 }
 
 setTimeout(function() { // autokiller

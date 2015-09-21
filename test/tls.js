@@ -16,7 +16,7 @@
 var task = require('..'); // use require('task-manager')
 var assert = require('assert');
 var tls = require('tls');
-var p = 20005;
+var p = 20004;
 
 /*
  * test module
