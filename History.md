@@ -1,3 +1,13 @@
+v1.4.0 / 2015-09-21
+==================
+
+  * Add "TLS" support (socket)
+  * Add "tls" (options)
+  * Add "UDP" support (socket)
+  * Add "udp" (options)
+  * Use case-insensitive commands
+  * Test `Node`@4
+
 v1.3.1 / 2015-08-14
 ==================
 
