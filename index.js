@@ -46,6 +46,218 @@ function load() {
 }
 
 /**
+ * TSL builder
+ * 
+ * @function wrapper
+ * @param {Object} my - options
+ * @return {Object}
+ */
+function wrapperTLS(my) {
+
+  var tls = require('tls');
+  var mod = load();
+  var keys = Object.keys(mod);
+  var ii = keys.length;
+
+  /*
+   * closure
+   */
+  /**
+   * print to console. Warning if you use node with `&`
+   * 
+   * @param {String} [console] - output string
+   */
+  var output = function() {
+
+    return;
+  };
+  if (my.output) {
+    output = function(consolle) {
+
+      return console.log(consolle);
+    };
+  }
+
+  /**
+   * resume reading
+   * 
+   * @function resume
+   * @param {Object} socket - socket connection
+   */
+  function resume(sock) {
+
+    return sock.resume();
+  }
+
+  /**
+   * print to console. Warning if you use node with `&`
+   * 
+   * @param {Object} sock - socket data
+   * @param {String} string - message string
+   * @param {Object} [object] - json data
+   */
+  var next = function(sock, string) {
+
+    sock.write(string, function() {
+
+      return sock.resume();
+    });
+  };
+  if (my.json) {
+    next = function(sock, string, object) {
+
+      sock.write(JSON.stringify(object), function() {
+
+        return sock.resume();
+      });
+    };
+  }
+
+  /**
+   * 'listening' listener
+   * 
+   * @param {Boolean} print - if print info
+   */
+  function start(print) {
+
+    return server.listen(my.listen, function() {
+
+      if (print) {
+        console.log('task manager bound at TLS:' + my.listen);
+      }
+      return;
+    });
+  }
+
+  /**
+   * body
+   */
+  var server = tls.createServer(my.tls, function(sock) {
+
+    var grant = false;
+    if (my.auth) {
+      if (grant) {
+        sock.write('> hello master\n', function() {
+
+          return output('client connected');
+        });
+      } else {
+        sock.write('> auth required\n');
+      }
+    } else {
+      sock.write('> hello master\n');
+    }
+
+    return sock.on('end', function() {
+
+      if (my.auth) {
+        grant = false;
+      }
+      return output('client disconnected');
+    }).on('data', function(buff) {
+
+      sock.pause();
+      var index;
+      var command = String(buff);
+      var workers = cluster.workers;
+
+      if (my.auth && grant === false) { // auth middleware
+        if (command.replace(commandRegex, '') === my.auth) {
+          grant = true;
+          sock.write('> hello master\n', function() {
+
+            output('client connected');
+            return resume(sock);
+          });
+
+        } else {
+          sock.write('> auth required\n', function() {
+
+            output('client denied');
+            return resume(sock);
+          });
+        }
+        return;
+      }
+
+      for (var i = 0; i < ii; ++i) { // every lib
+        var m = mod[keys[i]];
+        if (m.regex.test(command) === true) {
+          return m.body(sock, command, workers, next);
+        }
+      }
+
+      if (my.custom && my.custom.test(command)) {
+        my.callback(sock, command);
+        return resume(sock);
+
+      } else if (exitRegex.test(command)) {
+        sock.end('> exit\n', function() {
+
+          return server.close(function() {
+
+            return output('exit');
+          });
+        });
+        return process.exit(0);
+
+      } else if (closeRegex.test(command)) {
+        return sock.end('> close\n', function() {
+
+          return server.close(function() {
+
+            return output('close');
+          });
+        });
+
+      } else if (helpRegex.test(command)) {
+        index = '  disconnect [pid]\n';
+        index += '  fork\n';
+        index += '  kill [pid]\n';
+        index += '  memory\n';
+        index += '  ps\n';
+        index += '  title [name]\n';
+        index += '  uptime\n';
+        index += '  exit\n';
+        index += '  close\n';
+        return sock.write(index, function() {
+
+          return resume(sock);
+        });
+
+      } else if (nyanRegex.test(command)) {
+        index = '-_-_-_-_-_-_-_,------,      o      \n';
+        index += '_-_-_-_-_-_-_-|   /\\_/\\            \n';
+        index += '-_-_-_-_-_-_-~|__( ^ .^)  +     +  \n';
+        index += '_-_-_-_-_-_-_-""  ""               \n';
+        return sock.write(index, function() {
+
+          return resume(sock);
+        });
+      }
+
+      return sock.write('> unrecognized, try "help"\n', function() {
+
+        return resume(sock);
+      });
+    });
+  });
+
+  server.on('error', function(e) {
+
+    if (e.code === 'EADDRINUSE' || e.code === 'ECONNREFUSED') {
+      setTimeout(function() {
+
+        return start(false);
+      }, 1000);
+    }
+    return;
+  });
+
+  return start(true);
+}
+
+/**
  * TCP builder
  * 
  * @function wrapper
@@ -461,13 +673,20 @@ function task(listen, opt) {
     my.custom = false;
   }
 
-  if (Boolean(options.udp) === true) {
+  if (Boolean(options.udp) === true) { // upd
     if (~~what === 0) { // 0 if not a number
       throw new TypeError('required a port number for UDP connection');
     }
     return wrapperUDP(my);
+
+  } else if (typeof options.tls === 'object') { // tls
+    if (~~what === 0) { // 0 if not a number
+      throw new TypeError('required a port number for TLS connection');
+    }
+    my.tls = options.tls;
+    return wrapperTLS(my);
   }
 
-  return wrapperTCP(my);
+  return wrapperTCP(my); // tcp
 }
 module.exports = task;
