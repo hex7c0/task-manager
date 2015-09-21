@@ -68,7 +68,8 @@ describe('udp', function() {
           write('forkk', sock);
         }
         if (c++ >= 3) {
-          server.close(done);
+          server.close(); // no callback on Node@0.10
+          done();
         }
       }
     });
@@ -89,7 +90,8 @@ describe('udp', function() {
         var inp = String(buff);
         if (/^> father pid: [0-9]+\n> child pid: [0-9]+\n> child pid: [0-9]+\n/
             .test(inp)) {
-          server.close(done);
+          server.close(); // no callback on Node@0.10
+          done();
         } else {
           write('ps\n', sock);
         }
@@ -117,7 +119,8 @@ describe('udp', function() {
           reg = new RegExp('> ' + pid + ' killed\n');
         }
       } else if (reg.test(inp)) {
-        server.close(done);
+        server.close(); // no callback on Node@0.10
+        done();
       } else {
         write('fork\n', sock);
       }
