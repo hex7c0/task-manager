@@ -1,4 +1,4 @@
-# [task-manager](http://supergiovane.tk/#/task-manager)
+# [task-manager](https://github.com/hex7c0/task-manager)
 
 [![NPM version](https://img.shields.io/npm/v/task-manager.svg)](https://www.npmjs.com/package/task-manager)
 [![Linux Status](https://img.shields.io/travis/hex7c0/task-manager.svg?label=linux)](https://travis-ci.org/hex7c0/task-manager)

@@ -1,5 +1,5 @@
 {
-  "version": "1.4.0",
+  "version": "1.4.1",
   "name": "task-manager",
   "description": "task-manager for cluster or single application",
   "keywords": [
@@ -8,7 +8,7 @@
     "cluster"
   ],
   "preferGlobal": false,
-  "homepage": "http://supergiovane.tk/#/task-manager",
+  "homepage": "https://github.com/hex7c0/task-manager",
   "author": {
     "name": "hex7c0",
     "email": "hex7c0@gmail.com",
