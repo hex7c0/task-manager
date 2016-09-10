@@ -12,7 +12,7 @@
   "author": {
     "name": "hex7c0",
     "email": "hex7c0@gmail.com",
-    "url": "http://hex7c0.tk/"
+    "url": "https://hex7c0.github.io/"
   },
   "repository": {
     "type": "git",
@@ -23,19 +23,19 @@
     "email": "hex7c0@gmail.com"
   },
   "directories": {
-    "lib": "./min/lib"
+    "lib": "./min/lib",
+    "example": "./examples"
   },
   "main": "index.min.js",
   "dependencies": {
   },
   "devDependencies": {
-    "coveralls": "~2.11",
-    "grunt-contrib-clean": "~0.7",
-    "grunt-contrib-uglify": "~0.10",
-    "grunt-contrib-jshint": "~0.11",
-    "grunt-endline": "~0.4",
+    "grunt-contrib-clean": "~1.0",
+    "grunt-contrib-uglify": "~2.0",
+    "grunt-contrib-jshint": "~1.0",
+    "grunt-endline": "~0.5",
     "istanbul": "~0.4",
-    "mocha": "~2.3"
+    "mocha": "~3.0"
   },
   "engines": {
     "node": ">=0.10"
