@@ -4,7 +4,7 @@ function ps(sock, command, workers, next) {
     for (var keys = Object.keys(workers), outputString = "> father pid: " + process.pid + "\n", outputArray = {
         father: process.pid,
         child: []
-    }, i = 0, ii = keys.length; ii > i; ++i) {
+    }, i = 0, ii = keys.length; i < ii; ++i) {
         var index = workers[keys[i]], workerPid = index.process.pid;
         outputString += "> child pid: " + workerPid + "\n", outputArray.child.push(workerPid);
     }

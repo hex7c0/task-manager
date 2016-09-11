@@ -3,7 +3,7 @@
 function disconnect(sock, command, workers, next) {
     var pid = command.match(/[0-9]+/), keys = Object.keys(workers);
     if (pid && (pid = ~~pid[0])) {
-        for (var i = 0, ii = keys.length; ii > i; ++i) {
+        for (var i = 0, ii = keys.length; i < ii; ++i) {
             var index = workers[keys[i]];
             if (index.process.pid === pid) return index.disconnect(), index._timeout = setTimeout(function() {
                 return index.kill();
@@ -17,7 +17,7 @@ function disconnect(sock, command, workers, next) {
             error: "pid not found"
         });
     }
-    for (var i = 0, ii = keys.length; ii > i; ++i) {
+    for (var i = 0, ii = keys.length; i < ii; ++i) {
         var index = workers[keys[i]];
         index.disconnect(), index._timeout = setTimeout(function() {
             return index.kill();
