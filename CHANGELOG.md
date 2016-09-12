@@ -1,7 +1,12 @@
+v1.5.0 / 2016-09-12
+==================
+
+  * Tested against `node`@6
+
 v1.4.1 / 2015-11-19
 ==================
 
-  * Test `Node`@5
+  * Tested aginst `Node`@5
 
 v1.4.0 / 2015-09-21
 ==================
@@ -11,7 +16,7 @@ v1.4.0 / 2015-09-21
   * Add "UDP" support (socket)
   * Add "udp" (options)
   * Use case-insensitive commands
-  * Test `Node`@4
+  * Tested against `Node`@4
 
 v1.3.1 / 2015-08-14
 ==================

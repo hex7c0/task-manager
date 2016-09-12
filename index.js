@@ -3,7 +3,7 @@
  * @file task-manager main
  * @module task-manager
  * @subpackage main
- * @version 1.3.0
+ * @version 1.5.0
  * @author hex7c0 <hex7c0@gmail.com>
  * @copyright hex7c0 2014
  * @license GPLv3
