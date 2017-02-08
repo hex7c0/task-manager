@@ -1,7 +1,7 @@
 # [task-manager](https://github.com/hex7c0/task-manager)
 
 [![NPM version](https://img.shields.io/npm/v/task-manager.svg)](https://www.npmjs.com/package/task-manager)
-[![Linux Status](https://img.shields.io/travis/hex7c0/task-manager.svg?label=linux)](https://travis-ci.org/hex7c0/task-manager)
+[![Linux Status](https://img.shields.io/travis/hex7c0/task-manager.svg?label=linux-osx)](https://travis-ci.org/hex7c0/task-manager)
 [![Dependency Status](https://img.shields.io/david/hex7c0/task-manager.svg)](https://david-dm.org/hex7c0/task-manager)
 [![Coveralls](https://img.shields.io/coveralls/hex7c0/task-manager.svg)](https://coveralls.io/r/hex7c0/task-manager)
 
