@@ -1,9 +1,8 @@
 "use strict";
 
 function title(sock, command, workers, next) {
-    var command = command.replace(/^title[ ]?/i, ""), name = command.match(/^[a-z0-9]+/i);
-    return name && (name = String(name[0])) && (process.title = name), name = process.title, 
-    next(sock, "> title: " + name + "\n", {
+    var name = (command = command.replace(/^title[ ]?/i, "")).match(/^[a-z0-9]+/i);
+    return name && (name = String(name[0])) && (process.title = name), next(sock, "> title: " + (name = process.title) + "\n", {
         name: name
     });
 }

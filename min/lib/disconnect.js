@@ -4,11 +4,10 @@ function disconnect(sock, command, workers, next) {
     var pid = command.match(/[0-9]+/), keys = Object.keys(workers);
     if (pid && (pid = ~~pid[0])) {
         for (var i = 0, ii = keys.length; i < ii; ++i) {
-            var index = workers[keys[i]];
-            if (index.process.pid === pid) return index.disconnect(), index._timeout = setTimeout(function() {
+            if ((index = workers[keys[i]]).process.pid === pid) return index.disconnect(), index._timeout = setTimeout(function() {
                 return index.kill();
             }, 5e3), index.on("disconnect", function() {
-                index.process.killed === !0 && clearTimeout(index._timeout);
+                !0 === index.process.killed && clearTimeout(index._timeout);
             }), next(sock, "> " + pid + " disconnected\n", {
                 disconnect: pid
             });
@@ -17,12 +16,12 @@ function disconnect(sock, command, workers, next) {
             error: "pid not found"
         });
     }
-    for (var i = 0, ii = keys.length; i < ii; ++i) {
-        var index = workers[keys[i]];
-        index.disconnect(), index._timeout = setTimeout(function() {
+    for (i = 0, ii = keys.length; i < ii; ++i) {
+        var index;
+        (index = workers[keys[i]]).disconnect(), index._timeout = setTimeout(function() {
             return index.kill();
         }, 5e3), index.on("disconnect", function() {
-            index.process.killed === !0 && clearTimeout(index._timeout);
+            !0 === index.process.killed && clearTimeout(index._timeout);
         });
     }
     return next(sock, "> " + ii + " disconnected\n", {
